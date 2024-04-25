@@ -1,0 +1,62 @@
+﻿@page "/home"
+@page "/"
+
+<div class="container">
+    <h1 class="text-center my-4">Bienvenido a GreenCoinHealth</h1>
+    <p class="lead text-center">Descubre una nueva manera de mantener y gestionar tu salud de forma inteligente y personalizada.</p>
+
+    <div class="text-center my-5">
+        <button class="btn btn-primary btn-lg" @onclick="GoToLogin">Iniciar Sesión</button>
+    </div>
+
+    <div class="features row text-center my-5">
+        <div class="col-md-4">
+            <h3>Seguimiento Personalizado</h3>
+            <p>Gestiona y sigue tu salud con nuestras herramientas personalizadas y asesoramiento continuo.</p>
+        </div>
+        <div class="col-md-4">
+            <h3>Acceso a Información</h3>
+            <p>Accede a toda tu información médica en un solo lugar, fácil y seguro.</p>
+        </div>
+        <div class="col-md-4">
+            <h3>Consejos de Expertos</h3>
+            <p>Recibe consejos y recomendaciones de expertos en salud para mejorar tu bienestar diario.</p>
+        </div>
+    </div>
+
+    <div class="cta text-center my-5">
+        <h2>¿Listo para comenzar?</h2>
+        <button class="btn btn-success btn-lg" @onclick="GoToLogin">Únete ahora</button>
+    </div>
+</div>
+
+@code {
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
+    private void GoToLogin()
+    {
+        NavigationManager.NavigateTo("/login");
+    }
+}
+
+<style>
+    .container {
+        max-width: 1200px;
+        margin: auto;
+        padding: 0 15px;
+    }
+
+    .features .col-md-4 {
+        margin-top: 20px;
+    }
+
+    .btn-lg {
+        padding: 10px 30px;
+        font-size: 18px;
+    }
+
+    .cta h2 {
+        margin-bottom: 20px;
+    }
+</style>
