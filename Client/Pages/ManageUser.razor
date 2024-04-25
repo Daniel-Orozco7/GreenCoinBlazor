@@ -1,0 +1,199 @@
+﻿@page "/manageuser"
+
+@inject HttpClient httpClient
+@using GreenCoinHealth.Shared
+@using GreenCoinHealth.Client.Extensions
+
+@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Components.Authorization;
+@attribute [Authorize]
+
+
+<AuthorizeView>
+    <Authorized>
+        <h3>ManageUser</h3>
+
+        @if (userList == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <table class="table table-striped align-middle table-bordered">
+                <thead class="table-success">
+                    <tr>
+                        <th>Dni</th>
+                        <th>Tipo de documento</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Nombre de usuario</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in userList)
+                    {
+                        <tr>
+                            <td>@user.Dni</td>
+                            <td>@user.TypeDni</td>
+                            <td>@user.Name</td>
+                            <td>@user.LastName</td>
+                            <td>@user.username</td>
+                            <td>@user.Phone</td>
+                            <td>@user.Email</td>
+                            <td>
+                                <a href='/user/edit/@user.Dni' class="btn btn-outline-dark" role="button">
+                                    Edit
+                                </a>
+                                <a href='/user/delete/@user.Dni' class="btn btn-outline-danger" role="button">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+            @if (ShowPopup)
+            {
+                <!-- This is the popup to create or edit a user -->
+                <div class="modal" tabindex="-1" style="display:block" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title">Edit User</h3>
+                                <!-- Button to close the popup -->
+                                <button type="button" class="close"
+                                        @onclick="ClosePopup">
+                                    <span aria-hidden="true">X</span>
+                                </button>
+                            </div>
+                            <!-- Edit form for the current user -->
+                            <div class="modal-body">
+                                <form>
+                                    <!-- Email input -->
+                                    <div data-mdb-input-init class="form-outline mb-4">
+                                        <input type="email" id="email1" class="form-control" />
+                                        <label class="form-label" for="email1">Email address</label>
+                                    </div>
+                                </form>
+                                <!-- Only show Id if not a new user -->
+                                @if (objUser.Dni != "")
+                                {
+                                    <p>@objUser.Dni</p>
+                                }
+                                <!-- Only allow edit if a new user -->
+                                @if (objUser.Dni != "")
+                                {
+                                    <p>@objUser.username</p>
+                                }
+                                else
+                                {
+                                    <input class="form-control" type="text"
+                                           placeholder="UserName"
+                                           @bind="objUser.username" />
+                                }
+                                <input class="form-control" type="text"
+                                       placeholder="Email"
+                                       @bind="objUser.Email" />
+                                <input class="form-control" type="password"
+                                       placeholder="Password"
+                                       @bind="objUser.Password" />
+                                <select class="form-control"
+                                        @bind="@CurrentUserRole">
+                                    @foreach (var option in Options)
+                                    {
+                                        <option value="@option">
+                                            @option
+                                        </option>
+                                    }
+                                </select>
+                                <br /><br />
+                                <!-- Button to save the user -->
+                                <button class="btn btn-primary"
+                                        @onclick="SaveUser">
+                                    Save
+                                </button>
+                                <!-- Only show delete button if not a new record -->
+                                @if (objUser.Dni != "")
+                                {
+                                    <!-- Button to delete the forecast -->
+                                    <button class="btn btn-danger"
+                                            @onclick="DeleteUser">
+                                        Delete
+                                    </button>
+                                }
+                                <br />
+                                <span style="color:red">@strError</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            <button class="btn btn-success" @onclick="AddNewUser">Add User</button>
+        }
+
+    </Authorized>
+</AuthorizeView>
+
+
+
+@code {
+
+    // Property used to add or edit the currently selected user
+    UserDTO objUser = new UserDTO();
+    // Tracks the selected role for the currently selected user
+    string CurrentUserRole { get; set; } = "Users";
+    string CurrentUserGender { get; set; } = "Gender";
+    // Collection to display the existing users
+    protected List<UserDTO> userList; 
+    // Options to display in the roles dropdown when editing a user
+    List<string> Options = new List<string>() { "Administrators", "Nutricionista", "Usuario", };
+    List<string> Genders = new List<string>() { "Masculino", "Femenino", "Otro", };
+    // To hold any possible errors
+    string strError = "";
+    // To enable showing the Popup
+    bool ShowPopup = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        userList = await GetUsers();
+
+    }
+
+
+
+    public async Task<List<UserDTO>> GetUsers()
+    {
+        return await httpClient.GetFromJsonAsync<List<UserDTO>>("api/User/ReadUsers");
+
+    }
+
+    void AddNewUser()
+    {
+        // Make new user
+        objUser = new UserDTO();
+        objUser.Password = "*****";
+        // Set Id to blank so we know it is a new record
+        objUser.Dni = "";
+        // Open the Popup
+        ShowPopup = true;
+    }
+    async Task SaveUser()
+    {
+    }
+    async Task EditUser(UserDTO _user)
+    {
+    }
+    async Task DeleteUser()
+    {
+    }
+    void ClosePopup()
+    {
+        // Close the Popup
+        ShowPopup = false;
+    }
+}

@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenCoinHealth.Server", "Server\GreenCoinHealth.Server.csproj", "{726D9442-1084-46D2-9E0F-2BC81F1AB789}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenCoinHealth.Client", "Client\GreenCoinHealth.Client.csproj", "{982AD36F-9A9F-42BA-9DB6-DE0AB09BEB1F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreenCoinHealth.Shared", "Shared\GreenCoinHealth.Shared.csproj", "{F93541B6-A806-4112-ACED-8B6543ACEB46}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{726D9442-1084-46D2-9E0F-2BC81F1AB789}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{726D9442-1084-46D2-9E0F-2BC81F1AB789}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{726D9442-1084-46D2-9E0F-2BC81F1AB789}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{726D9442-1084-46D2-9E0F-2BC81F1AB789}.Release|Any CPU.Build.0 = Release|Any CPU
+		{982AD36F-9A9F-42BA-9DB6-DE0AB09BEB1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{982AD36F-9A9F-42BA-9DB6-DE0AB09BEB1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{982AD36F-9A9F-42BA-9DB6-DE0AB09BEB1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{982AD36F-9A9F-42BA-9DB6-DE0AB09BEB1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F93541B6-A806-4112-ACED-8B6543ACEB46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F93541B6-A806-4112-ACED-8B6543ACEB46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F93541B6-A806-4112-ACED-8B6543ACEB46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F93541B6-A806-4112-ACED-8B6543ACEB46}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3CD3903A-D89B-4E38-A94B-64EAB4A9529A}
+	EndGlobalSection
+EndGlobal
