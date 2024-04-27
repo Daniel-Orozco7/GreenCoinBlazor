@@ -1,0 +1,66 @@
+﻿@* @page "/formulario-alimentos"
+@using GreenCoinHealth.Shared.Models;
+@using HttpClientFactory
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h3>Formulario de Alimentos</h3>
+
+@if (alimento == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <EditForm Model="alimento" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <InputText id="nombre" class="form-control" @bind-Value="alimento.Nombre" />
+        </div>
+        <div class="form-group">
+            <label for="calorias">Calorías:</label>
+            <InputNumber id="calorias" class="form-control" @bind-Value="alimento.Calorias" />
+        </div>
+        <div class="form-group">
+            <label for="proteinas">Proteínas (g):</label>
+            <InputNumber id="proteinas" class="form-control" @bind-Value="alimento.Proteinas" />
+        </div>
+        <div class="form-group">
+            <label for="carbohidratos">Carbohidratos (g):</label>
+            <InputNumber id="carbohidratos" class="form-control" @bind-Value="alimento.Carbohidratos" />
+        </div>
+        <div class="form-group">
+            <label for="grasas">Grasas (g):</label>
+            <InputNumber id="grasas" class="form-control" @bind-Value="alimento.Grasas" />
+        </div>
+
+        <button type="submit" class="btn btn-success">Guardar</button>
+    </EditForm>
+}
+
+@code {
+    private Alimento alimento;
+
+    protected override async Task OnInitializedAsync()
+    {
+        alimento = new Alimentos(); // Este sería un nuevo alimento. Para editar, necesitarías cargar un alimento existente aquí.
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (alimento.Id == 0)
+        {
+            await Http.PostAsJsonAsync("api/alimentos", alimento);
+        }
+        else
+        {
+            await Http.PutAsJsonAsync($"api/alimentos/{alimento.Id}", alimento);
+        }
+
+        NavigationManager.NavigateTo("/nutricionista"); // Regresar al área principal del nutricionista
+    }
+}
+ *@

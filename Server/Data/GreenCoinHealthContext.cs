@@ -31,7 +31,7 @@ namespace GreenCoinHealth.Server.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=DESKTOP-8V35UTL;Database=GreenCoinHealth;Trusted_Connection=True;MultipleActiveResultSets=True;Trust Server Certificate=true");
+                optionsBuilder.UseSqlServer("Server=DANIEL;Database=GreenCoinHealthDB;Trusted_Connection=True;MultipleActiveResultSets=True;Trust Server Certificate=true");
             }
         }
 
