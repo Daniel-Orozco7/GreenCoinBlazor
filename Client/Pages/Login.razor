@@ -6,37 +6,28 @@
 @using GreenCoinHealth.Client.Extensions
 @using GreenCoinHealth.Shared
 @using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims;
 @inject AuthenticationStateProvider autenticacionProvider
 @inject NavigationManager navManager
 
-
-
 <div class="row mt-5">
-
     <div class="col-lg-4 offset-lg-4 border">
-
         <div class="mb-3 text-center">
             <h3>LOGIN</h3>
         </div>
-
         <div class="mb-3">
             <label>Correo</label>
             <input @bind="login.Email" class="form-control" />
         </div>
-
         <div class="mb-3">
             <label>Contraseña</label>
             <input type="password" @bind="login.Password" class="form-control" />
         </div>
-
         <div class="mb-3">
             <button @onclick="IniciarSesion" class="btn btn-primary">Login</button>
         </div>
-
     </div>
-
 </div>
-
 
 @code {
     private LoginDTO login = new LoginDTO();
@@ -50,8 +41,28 @@
             var autenticacionExt = (AuthExtension)autenticacionProvider;
             await autenticacionExt.ActualizarEstadoAutenticacion(sesionUsuario);
 
-            navManager.NavigateTo("/Index");
-        }
-    }
+            // Obtener el rol del usuario
+            var user = (await autenticacionProvider.GetAuthenticationStateAsync()).User;
+            var roles = user.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
 
+            // Redireccionar basado en el rol
+            if (roles.Contains("Nutricionista"))
+            {
+                navManager.NavigateTo("/nutricionista");
+            }
+            else if (roles.Contains("Usuario"))
+            {
+                navManager.NavigateTo("/usuario");
+            }
+            else if (roles.Contains("Administrador"))
+            {
+                navManager.NavigateTo("/ManageUser");
+            }
+            else
+            {
+                navManager.NavigateTo("/"); // Redirigir a la página de inicio por defecto
+            }
+        }
+       
+    }
 }

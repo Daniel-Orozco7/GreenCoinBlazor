@@ -20,8 +20,9 @@ namespace GreenCoinHealth.Server.Controllers
             _context = context;
         }
         //POST: api/User
-        [HttpPost("Register_User")]
-        public IActionResult Register_User([FromBody] UserDTO user)
+        [HttpPost]
+        [Route("RegisterUser")]
+        public IActionResult RegisterUser([FromBody] UserDTO user)
         {
             var us = new UserServices();
             if(user == null)
@@ -50,12 +51,10 @@ namespace GreenCoinHealth.Server.Controllers
             {
 
                 var usR = new UserRepository();
-                var us = new UserServices();
 
                 var users = usR.ReadUsers();
-                //var users = us.ListUser(user);
 
-                if (us != null)
+                if (users != null)
                 {
                     return users;// Ok(new { StatusCode = 200, Usuarios = users });
                 }
@@ -71,10 +70,10 @@ namespace GreenCoinHealth.Server.Controllers
             }
         }
 
-        [HttpPut("UpdateUser/{dni}")]
-        public async Task<IActionResult> updateUser(string dni, [FromBody] UserDTO user)
+        [HttpPut("UpdateUser")]
+        public async Task<IActionResult> updateUser([FromBody] UserDTO user)
         {
-            var user_Exists = await _context.Users.FirstOrDefaultAsync(u => u.Dni == dni);
+            var user_Exists = await _context.Users.FirstOrDefaultAsync(u => u.Dni == user.Dni);
             
 
             if (user_Exists == null)
@@ -82,17 +81,14 @@ namespace GreenCoinHealth.Server.Controllers
                 return NotFound(new {Mensaje= "El usuario no existe" });
             }
             TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
-            string names = user.Name + " " + user.second_name;
-            string lastnames = user.LastName + " " + user.second_surname;
 
-            user_Exists.Dni = user.Dni;
-            user_Exists.TypeDni = user.TypeDni;
-            user_Exists.Name = names;
-            user_Exists.LastName = lastnames;
+            user_Exists.Name = user.Name;
+            user_Exists.LastName = user.LastName;
             user_Exists.Username = user.username;
             user_Exists.Email = user.Email;
             user_Exists.Phone = user.Phone;
             user_Exists.IdGender = user.Gender;
+            user_Exists.IdRole = user.UserRole;
 
             _context.Users.Update(user_Exists);
             await _context.SaveChangesAsync();
@@ -117,16 +113,18 @@ namespace GreenCoinHealth.Server.Controllers
         }
 
         [HttpGet("GetUser/{dni}")]
-        public async Task<IActionResult> getUser(string dni)
+        public IActionResult GetUser(string dni)
         {
-            var us = await _context.Users.FirstOrDefaultAsync(u => u.Dni == dni);
+            var us = new UserServices();
 
-            if (us == null)
+            var existingUser =  us.FindByDni(dni);
+
+            if (existingUser == null)
             {
-                return NotFound(new { Mensaje = "El usuario con DNI "+dni+" no se encuentra en la base datos " });
+                return NotFound(new { Mensaje = "El usuario con DNI "+ dni + " no se encuentra en la base datos " });
             }
 
-            return Ok(us);
+            return StatusCode(StatusCodes.Status200OK, existingUser);
         }
         
     }

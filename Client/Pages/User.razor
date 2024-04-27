@@ -1,0 +1,6 @@
+﻿@page "/usuario"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize(Roles = "Usuario")]
+
+<h1>Área vista usuario</h1>
+<p>Bienvenido usuario</p>

@@ -20,10 +20,6 @@ public class UserRepository
         {
             return "El campo nombre debe tener al menos 3 caracteres";
         }
-        if (!string.IsNullOrWhiteSpace(user.second_name))
-        {
-            return "El campo segundo nombre es obligatorio";
-        }
         if (string.IsNullOrWhiteSpace(user.LastName))
         {
             return "El campo apellido es obligatorio";
@@ -35,10 +31,6 @@ public class UserRepository
         if (user.LastName.Length <= 3)
         {
             return "El campo apellido debe tener al menos 3 caracteres";
-        }
-        if (string.IsNullOrWhiteSpace(user.second_surname))
-        {
-            return "El campo segundo apellido es obligatorio";
         }
         if (string.IsNullOrWhiteSpace(user.username))
         {
@@ -97,8 +89,6 @@ public class UserRepository
             {
                 var usuario = context.Users.SingleOrDefault(u => u.Dni == model.Dni);
                 TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
-                string names = model.Name + " " + model.second_name;
-                string lastnames = model.LastName + " " + model.second_surname;
 
                 if (usuario == null)
                 {
@@ -106,8 +96,8 @@ public class UserRepository
                     {
                         Dni = model.Dni,
                         TypeDni = model.TypeDni,
-                        Name = textInfo.ToTitleCase(names),
-                        LastName = textInfo.ToTitleCase(lastnames),
+                        Name = textInfo.ToTitleCase(model.Name),
+                        LastName = textInfo.ToTitleCase(model.LastName),
                         Username = model.username,
                         Email = model.Email,
                         Phone = model.Phone,
@@ -342,8 +332,9 @@ public class UserRepository
     /// <param name="dni">El DNI del usuario a buscar.</param>
     /// <returns>Un UserDTO si se encuentra el usuario, null en caso contrario.</returns>
 
-    public UserDTO FindByDni(string dni)
+    public static UserDTO FindByDni(string dni)
     {
+        EncriptPwd encriptPwd = new EncriptPwd();
         using (var context = new GreenCoinHealthContext())
         {
             try
@@ -359,7 +350,8 @@ public class UserRepository
                         username = u.Username,
                         Email = u.Email,
                         Phone = u.Phone,
-                        Gender = u.IdGender
+                        Gender = u.IdGender,
+                        UserRole = u.IdRole
                     }).FirstOrDefault();
                 return user;
             }

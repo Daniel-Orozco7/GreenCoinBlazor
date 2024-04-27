@@ -6,11 +6,12 @@
 
 @using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.Components.Authorization;
+@inject NavigationManager navManager
 @attribute [Authorize]
 
 
 <AuthorizeView>
-    <Authorized>
+    <Authorized Context="authContext">
         <h3>ManageUser</h3>
 
         @if (userList == null)
@@ -20,7 +21,7 @@
         else
         {
             <table class="table table-striped align-middle table-bordered">
-                <thead class="table-success">
+                <thead class="table-primary">
                     <tr>
                         <th>Dni</th>
                         <th>Tipo de documento</th>
@@ -44,10 +45,10 @@
                             <td>@user.Phone</td>
                             <td>@user.Email</td>
                             <td>
-                                <a href='/user/edit/@user.Dni' class="btn btn-outline-dark" role="button">
+                                <button class="btn btn-primary" @onclick="() => EditUser(user.Dni)">
                                     Edit
-                                </a>
-                                <a href='/user/delete/@user.Dni' class="btn btn-outline-danger" role="button">
+                                </button>
+                                <a href='/user/delete/@user.Dni' class="btn btn-danger" role="button">
                                     Delete
                                 </a>
                             </td>
@@ -61,7 +62,7 @@
             {
                 <!-- This is the popup to create or edit a user -->
                 <div class="modal" tabindex="-1" style="display:block" role="dialog">
-                    <div class="modal-dialog">
+                    <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h3 class="modal-title">Edit User</h3>
@@ -73,67 +74,146 @@
                             </div>
                             <!-- Edit form for the current user -->
                             <div class="modal-body">
-                                <form>
-                                    <!-- Email input -->
-                                    <div data-mdb-input-init class="form-outline mb-4">
-                                        <input type="email" id="email1" class="form-control" />
-                                        <label class="form-label" for="email1">Email address</label>
+                                <EditForm OnValidSubmit="SaveUser" Model="@objUser">
+                                    <DataAnnotationsValidator />
+                                @if (!isEdit)
+                                {
+                                    <div class="form-group row mb-1">
+                                        <label class="col-sm-3 col-form-label" for="ddlDniType">Tipo de documento:</label>
+                                        <div class="col-sm-9">
+                                            <InputSelect class="form-control" id="ddlDniType" @bind-Value="@objUser.TypeDni">
+                                                @foreach (var usrDocType in Enum.GetValues(typeof(AppEnums.UserDocType)))
+                                                {
+                                                    <option value="@usrDocType">@usrDocType</option>
+                                                }
+                                            </InputSelect>
+                                            <ValidationMessage For="@(() => objUser.TypeDni)" />
+                                        </div>
                                     </div>
-                                </form>
-                                <!-- Only show Id if not a new user -->
-                                @if (objUser.Dni != "")
-                                {
-                                    <p>@objUser.Dni</p>
-                                }
-                                <!-- Only allow edit if a new user -->
-                                @if (objUser.Dni != "")
-                                {
-                                    <p>@objUser.username</p>
+                                    <div class="form-group row mb-1">
+                                        <label class="col-sm-3 col-form-label" for="usrDni">DNI</label>
+                                        <div class="col-sm-9">
+                                            <InputText Class="form-control" id="usrDni" @bind-Value="@objUser.Dni" />
+                                            <ValidationMessage For="@(() => objUser.Dni)" />
+                                        </div>
+                                    </div>
                                 }
                                 else
                                 {
-                                    <input class="form-control" type="text"
-                                           placeholder="UserName"
-                                           @bind="objUser.username" />
+                                    <div class="form-group row mb-1">
+                                        <label class="col-sm-3 col-form-label" for="ddlDniType">Tipo de documento:</label>
+                                        <div class="col-sm-9">
+                                            <InputText Class="form-control" disabled="disabled" id="ddlDniType" @bind-Value="@objUser.TypeDni" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-1">
+                                        <label class="col-sm-3 col-form-label" for="usrDni">DNI</label>
+                                        <div class="col-sm-9">
+                                            <InputText Class="form-control" disabled="disabled" id="usrDni" @bind-Value="@objUser.Dni" />
+                                        </div>
+                                    </div>
+                                    
                                 }
-                                <input class="form-control" type="text"
-                                       placeholder="Email"
-                                       @bind="objUser.Email" />
-                                <input class="form-control" type="password"
-                                       placeholder="Password"
-                                       @bind="objUser.Password" />
-                                <select class="form-control"
-                                        @bind="@CurrentUserRole">
-                                    @foreach (var option in Options)
+                                    <div class="form-group row mb-1">
+                                        <label class="col-sm-3 col-form-label" for="ddlGender">Género</label>
+                                        <div class="col-sm-9">
+                                            <InputSelect class="form-control" id="ddlGender" @bind-Value="@objUser.Gender">
+                                                @foreach (var usrGender in Enum.GetValues(typeof(AppEnums.UserGender)))
+                                                {
+                                                    <option value="@usrGender">@usrGender</option>
+                                                }
+                                            </InputSelect>
+                                            <ValidationMessage For="@(() => objUser.Gender)" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-1">
+                                        <label class="col-sm-3 col-form-label" for="usrName">Nombre Usuario</label>
+                                        <div class="col-sm-9">
+                                            <InputText Class="form-control" id="usrName" @bind-Value="@objUser.username" />
+                                            <ValidationMessage For="@(() => objUser.username)" />
+                                        </div>
+                                    </div>
+                                    @if (!isEdit)
                                     {
-                                        <option value="@option">
-                                            @option
-                                        </option>
+                                        <div class="form-group row mb-1">
+                                            <label class="col-sm-3 col-form-label" for="pwd">Password</label>
+                                            <div class="col-sm-9">
+                                                <InputText type="password" Class="form-control" id="pwd" @bind-Value="@objUser.Password" />
+                                                <ValidationMessage For="@(() => objUser.Password)" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-1">
+                                            <label class="col-sm-3 col-form-label" for="pwdConfirm">Confirme Password</label>
+                                            <div class="col-sm-9">
+                                                <InputText type="password" Class="form-control" id="pwdConfirm" @bind-Value="@objUser.Confirm_Password" />
+                                                <ValidationMessage For="@(() => objUser.Confirm_Password)" />
+                                            </div>
+                                        </div>
                                     }
-                                </select>
-                                <br /><br />
-                                <!-- Button to save the user -->
-                                <button class="btn btn-primary"
-                                        @onclick="SaveUser">
-                                    Save
-                                </button>
-                                <!-- Only show delete button if not a new record -->
-                                @if (objUser.Dni != "")
-                                {
-                                    <!-- Button to delete the forecast -->
-                                    <button class="btn btn-danger"
-                                            @onclick="DeleteUser">
-                                        Delete
-                                    </button>
-                                }
-                                <br />
-                                <span style="color:red">@strError</span>
+                                    <div class="form-group row mb-1">
+                                        <label class="col-sm-3 col-form-label" for="fName">Nombre</label>
+                                        <div class="col-sm-9">
+                                            <InputText Class="form-control" id="fName" @bind-Value="@objUser.Name" />
+                                            <ValidationMessage For="@(() => objUser.Name)" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-1">
+                                        <label class="col-sm-3 col-form-label" for="usrLastName">Apellido</label>
+                                        <div class="col-sm-9">
+                                            <InputText Class="form-control" id="usrLastName" @bind-Value="@objUser.LastName" />
+                                            <ValidationMessage For="@(() => objUser.LastName)" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-1">
+                                        <label class="col-sm-3 col-form-label" for="usrEmail">Email</label>
+                                        <div class="col-sm-9">
+                                            <InputText Class="form-control" id="usrEmail" @bind-Value="@objUser.Email" />
+                                            <ValidationMessage For="@(() => objUser.Email)" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-1">
+                                        <label class="col-sm-3 col-form-label" for="usrPhone">Teléfono</label>
+                                        <div class="col-sm-9">
+                                            <InputText Class="form-control" id="usrPhone" @bind-Value="@objUser.Phone" />
+                                            <ValidationMessage For="@(() => objUser.Phone)" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-1">
+                                        <label class="col-sm-3 col-form-label" for="ddlRole">Rol</label>
+                                        <div class="col-sm-9">
+                                            <InputSelect class="form-control" id="ddlRole" @bind-Value="@objUser.UserRole">
+                                                @foreach (var usrRole in Enum.GetValues(typeof(AppEnums.UserRole)))
+                                                {
+                                                    <option value="@usrRole">@usrRole</option>
+                                                }
+                                            </InputSelect>
+                                            <ValidationMessage For="@(() => objUser.UserRole)" />
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <br />
+                                    <div>
+                                        <span style="color:#28a745">@strSuccess</span>
+                                        <span style="color:#dc3545">@strError</span>
+                                    </div>
+                                    <br />
+                                    <div class="row flex-xl-nowrap">
+                                    @if (!isEdit)
+                                    {
+                                        <button class="btn btn btn-primary btn-lg btn-block" type="submit">Save</button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-primary" @onclick="SaveEditUser">Add User</button>
+                                    }
+                                    </div>
+                                </EditForm>
                             </div>
                         </div>
                     </div>
                 </div>
             }
-            <button class="btn btn-success" @onclick="AddNewUser">Add User</button>
+            <button class="btn btn-primary" @onclick="AddNewUser">Add User</button>
         }
 
     </Authorized>
@@ -145,30 +225,27 @@
 
     // Property used to add or edit the currently selected user
     UserDTO objUser = new UserDTO();
-    // Tracks the selected role for the currently selected user
-    string CurrentUserRole { get; set; } = "Users";
-    string CurrentUserGender { get; set; } = "Gender";
     // Collection to display the existing users
     protected List<UserDTO> userList; 
-    // Options to display in the roles dropdown when editing a user
-    List<string> Options = new List<string>() { "Administrators", "Nutricionista", "Usuario", };
-    List<string> Genders = new List<string>() { "Masculino", "Femenino", "Otro", };
     // To hold any possible errors
     string strError = "";
+    // To hold the registration success
+    string strSuccess = "";
     // To enable showing the Popup
     bool ShowPopup = false;
+    bool isEdit = false;
+    private bool canSendData;
 
     protected override async Task OnInitializedAsync()
     {
         userList = await GetUsers();
-
     }
 
 
 
     public async Task<List<UserDTO>> GetUsers()
     {
-        return await httpClient.GetFromJsonAsync<List<UserDTO>>("api/User/ReadUsers");
+        return await httpClient.GetFromJsonAsync<List<UserDTO>>("/api/User/ReadUsers");
 
     }
 
@@ -176,17 +253,91 @@
     {
         // Make new user
         objUser = new UserDTO();
-        objUser.Password = "*****";
         // Set Id to blank so we know it is a new record
         objUser.Dni = "";
+        //Clear messages
+        strSuccess = "";
+        strError = "";
         // Open the Popup
         ShowPopup = true;
     }
+
+    // async Task SaveUser()
+    // {
+    //     strSuccess = "";
+    //     strError = "";
+
+    //     objUser.Gender = ((int)(AppEnums.UserGender)Enum.Parse(typeof(AppEnums.UserGender), objUser.Gender)).ToString();
+    //     objUser.UserRole = ((int)(AppEnums.UserRole)Enum.Parse(typeof(AppEnums.UserRole), objUser.UserRole)).ToString();
+
+    //     if (!isEdit)
+    //         RegisterUser();
+    //     else
+    //         UpdateUser();
+    // }
+
     async Task SaveUser()
     {
+        strSuccess = "";
+        strError = "";
+
+        objUser.Gender = ((int)(AppEnums.UserGender)Enum.Parse(typeof(AppEnums.UserGender), objUser.Gender)).ToString();
+        objUser.UserRole = ((int)(AppEnums.UserRole)Enum.Parse(typeof(AppEnums.UserRole), objUser.UserRole)).ToString();
+
+        var saveResponse = await httpClient.PostAsJsonAsync<UserDTO>("/api/User/RegisterUser", objUser);
+        var registerResponse = await saveResponse.Content.ReadFromJsonAsync<ResultDTO>();
+
+        if (saveResponse.IsSuccessStatusCode)
+        {
+            strSuccess = registerResponse.Mensaje;
+            userList = await GetUsers();
+        }
+        else
+        {
+
+            strError = registerResponse.Mensaje;
+        }
     }
-    async Task EditUser(UserDTO _user)
+
+
+    async Task SaveEditUser()
     {
+        var saveResponse = await httpClient.PutAsJsonAsync<UserDTO>("/api/User/UpdateUser", objUser);
+        var registerResponse = await saveResponse.Content.ReadFromJsonAsync<ResultDTO>();
+
+        if (saveResponse.IsSuccessStatusCode)
+        {
+            strSuccess = registerResponse.Mensaje;
+            userList = await GetUsers();
+        }
+        else
+        {
+
+            strError = registerResponse.Mensaje;
+        }
+
+        isEdit = false;
+        ShowPopup = false;
+    }
+
+
+    async Task EditUser(string userDni)
+    {
+        //Clear messages
+        strSuccess = "";
+        strError = "";
+
+        objUser = await httpClient.GetFromJsonAsync<UserDTO>($"/api/User/GetUser/{userDni}");
+
+        objUser.Gender = Enum.GetName(typeof(AppEnums.UserGender), Convert.ToInt32(objUser.Gender));
+        objUser.UserRole = Enum.GetName(typeof(AppEnums.UserRole), Convert.ToInt32(objUser.UserRole));
+
+
+        // Open the Popup
+        ShowPopup = true;
+        isEdit = true;
+
+
     }
     async Task DeleteUser()
     {
@@ -195,5 +346,37 @@
     {
         // Close the Popup
         ShowPopup = false;
+    }
+
+    private async void Submit(EditContext editContext)
+    {
+        var pwdFieldIdentifier = editContext.Field("Password");
+        var pdwConfirmFieldIdentifier = editContext.Field("Confirm_Password");
+
+        var validationMessagesCount = editContext.GetValidationMessages().Count();
+        if (validationMessagesCount == 0)
+        {// every field is valid
+            canSendData = true;
+            StateHasChanged();
+        }
+        else if (editContext.GetValidationMessages(pwdFieldIdentifier).Count() > 0)
+        {// every field is valid except the field for the `Name` property, but we dont care about it
+            canSendData = true;
+            StateHasChanged();
+        }
+        else if (editContext.GetValidationMessages(pdwConfirmFieldIdentifier).Count() > 0)
+        {// every field is valid except the field for the `Name` property, but we dont care about it
+            canSendData = true;
+            StateHasChanged();
+        }
+        else
+        {// there is/are some invalid field/s that we care about
+            canSendData = false;
+            StateHasChanged();
+        }
+
+        if (canSendData)
+            await SaveUser();
+
     }
 }

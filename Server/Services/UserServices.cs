@@ -1,5 +1,6 @@
 ﻿using GreenCoinHealth.Server.Models;
 using GreenCoinHealth.Shared;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
 public class UserServices
@@ -20,6 +21,14 @@ public class UserServices
                 Code = 201
             };
 
+        }
+        else
+        {
+            respuestaJson = new ResultDTO()
+            {
+                Mensaje = "Se presentó un inconveniente al registrar el usuario",
+                Code = 500
+            };
         }
 
         return respuestaJson;
@@ -92,5 +101,10 @@ public class UserServices
         {
             throw new InvalidOperationException("No hay usuarios registrados");
         }
-    }  
+    }
+
+    public UserDTO FindByDni(string dni)
+    {
+        return UserRepository.FindByDni(dni);
+    }
 }

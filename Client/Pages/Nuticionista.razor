@@ -1,0 +1,17 @@
+﻿@page "/nutricionista"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Nutricionista")]
+@inject NavigationManager NavigationManager
+
+<h1>Área del Nutricionista</h1>
+<p>Bienvenido a tu panel de control especializado.</p>
+
+<!-- Botón para navegar a la vista de formularios -->
+<button class="btn btn-primary" @onclick="GoToFormularios">Gestionar Alimentos y Ejercicios</button>
+
+@code {
+    private void GoToFormularios()
+    {
+        NavigationManager.NavigateTo("/nutricionista-formularios");
+    }
+}
