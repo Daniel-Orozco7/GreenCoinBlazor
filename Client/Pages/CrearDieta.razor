@@ -1,0 +1,97 @@
+﻿@page "/dietas-crear"
+@inject IJSRuntime JS
+@using GreenCoinHealth.Shared.Models
+@inject HttpClient Http
+@using System.Text.Json;
+@inject NavigationManager NavigationManager
+
+
+<h1>Crear nueva dieta</h1>
+<EditForm Model="@dieta" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="nombre">Nombre:</label>
+        <InputText id="nombre" class="form-control" @bind-Value="dieta.Nombre" />
+    </div>
+    <div class="form-group">
+        <label for="calorias">Descripcion:</label>
+        <InputTextArea id="descripcion" class="form-control" @bind-Value="dieta.Descripcion" />
+    </div>
+    <div class="form-group">
+        <label>Alimentos Seleccionados:</label>
+
+        <div>
+            <ul>
+                @if (AlimentosDisponibles != null)
+                {
+                    @foreach (var alimento in AlimentosDisponibles)
+                    {
+                        
+                            <label>
+                            <input @onchange="(() => agregarAlimentos(alimento))" type="checkbox" name="alimentosSeleccionados" value="@alimento.Nombre" />
+                                @alimento.Nombre
+                            </label>
+                        
+                    }
+                }
+            </ul>
+        </div>
+
+    </div>
+
+    <button type="submit" class="btn btn-success">Guardar</button>
+</EditForm>
+
+@code {
+    private Dieta dieta=new Dieta();
+    private List<Alimentos> AlimentosDisponibles { get; set; }
+    private List<Alimentos> AlimentosSeleccionados { get; set; } = new List<Alimentos>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+
+        AlimentosDisponibles = await Http.GetFromJsonAsync<List<Alimentos>>("/api/alimentos");
+
+        await JS.InvokeVoidAsync("console.log", AlimentosDisponibles);
+    }
+    private async Task agregarAlimentos(Alimentos alimentos)
+    {
+        if (AlimentosSeleccionados.Contains(alimentos))
+        {
+            AlimentosSeleccionados.Remove(alimentos);
+        }
+        else
+        {
+            AlimentosSeleccionados.Add(alimentos);
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        string jsonString = JsonSerializer.Serialize(AlimentosSeleccionados);
+
+        dieta.Alimentolist = jsonString;
+        // List <Alimentos> alimentos;
+        // alimentos = JsonSerializer.Deserialize<List<Alimentos>>(jsonString);
+
+        // await JS.InvokeVoidAsync("console.log", alimentos);
+        if (dieta.DietaId == 0)
+        {
+            await Http.PostAsJsonAsync("api/Dietas/", dieta);
+        }
+        else
+        {
+            await Http.PutAsJsonAsync($"api/Dietas/{dieta.DietaId}", dieta);
+        }
+
+       
+
+         await JS.InvokeVoidAsync("alert", "dieta creada con exito");
+
+    }
+   
+}

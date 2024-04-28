@@ -64,6 +64,10 @@ namespace GreenCoinHealth.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DietaId"));
 
+                    b.Property<string>("Alimentolist")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -75,38 +79,6 @@ namespace GreenCoinHealth.Server.Migrations
                     b.HasKey("DietaId");
 
                     b.ToTable("Dietas");
-                });
-
-            modelBuilder.Entity("GreenCoinHealth.Server.Models.DietaAlimento", b =>
-                {
-                    b.Property<int>("DietaId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AlimentoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("DietaId", "AlimentoId");
-
-                    b.HasIndex("AlimentoId");
-
-                    b.ToTable("DietaAlimentos");
-                });
-
-            modelBuilder.Entity("GreenCoinHealth.Server.Models.Dificultad", b =>
-                {
-                    b.Property<int>("DificultadId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DificultadId"));
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("DificultadId");
-
-                    b.ToTable("Dificultades");
                 });
 
             modelBuilder.Entity("GreenCoinHealth.Server.Models.Ejercicio", b =>
@@ -121,9 +93,6 @@ namespace GreenCoinHealth.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DificultadId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -131,17 +100,10 @@ namespace GreenCoinHealth.Server.Migrations
                     b.Property<int>("Repeticiones")
                         .HasColumnType("int");
 
-                    b.Property<int>("RutinaId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Series")
                         .HasColumnType("int");
 
                     b.HasKey("EjercicioId");
-
-                    b.HasIndex("DificultadId");
-
-                    b.HasIndex("RutinaId");
 
                     b.ToTable("Ejercicios");
                 });
@@ -187,6 +149,10 @@ namespace GreenCoinHealth.Server.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RutinaId"));
 
                     b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Ejercicios")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -257,44 +223,6 @@ namespace GreenCoinHealth.Server.Migrations
                     b.ToTable("User", (string)null);
                 });
 
-            modelBuilder.Entity("GreenCoinHealth.Server.Models.DietaAlimento", b =>
-                {
-                    b.HasOne("GreenCoinHealth.Server.Models.Alimentos", "Alimento")
-                        .WithMany()
-                        .HasForeignKey("AlimentoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GreenCoinHealth.Server.Models.Dieta", "Dieta")
-                        .WithMany("DietaAlimentos")
-                        .HasForeignKey("DietaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Alimento");
-
-                    b.Navigation("Dieta");
-                });
-
-            modelBuilder.Entity("GreenCoinHealth.Server.Models.Ejercicio", b =>
-                {
-                    b.HasOne("GreenCoinHealth.Server.Models.Dificultad", "Dificultad")
-                        .WithMany()
-                        .HasForeignKey("DificultadId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GreenCoinHealth.Server.Models.Rutina", "Rutina")
-                        .WithMany("Ejercicios")
-                        .HasForeignKey("RutinaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Dificultad");
-
-                    b.Navigation("Rutina");
-                });
-
             modelBuilder.Entity("GreenCoinHealth.Server.Models.User", b =>
                 {
                     b.HasOne("GreenCoinHealth.Server.Models.Gender", "IdGenderNavigation")
@@ -314,11 +242,6 @@ namespace GreenCoinHealth.Server.Migrations
                     b.Navigation("IdRoleNavigation");
                 });
 
-            modelBuilder.Entity("GreenCoinHealth.Server.Models.Dieta", b =>
-                {
-                    b.Navigation("DietaAlimentos");
-                });
-
             modelBuilder.Entity("GreenCoinHealth.Server.Models.Gender", b =>
                 {
                     b.Navigation("Users");
@@ -327,11 +250,6 @@ namespace GreenCoinHealth.Server.Migrations
             modelBuilder.Entity("GreenCoinHealth.Server.Models.Role", b =>
                 {
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("GreenCoinHealth.Server.Models.Rutina", b =>
-                {
-                    b.Navigation("Ejercicios");
                 });
 #pragma warning restore 612, 618
         }

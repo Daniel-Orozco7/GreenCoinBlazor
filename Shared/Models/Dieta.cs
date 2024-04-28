@@ -5,6 +5,6 @@
         public int DietaId { get; set; }
         public string Nombre { get; set; }
         public string Descripcion { get; set; }
-        public virtual ICollection<DietaAlimento> DietaAlimentos { get; set; }
+        public string Alimentolist  { get; set; }
     }
 }

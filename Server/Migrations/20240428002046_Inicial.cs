@@ -4,8 +4,10 @@
 
 namespace GreenCoinHealth.Server.Migrations
 {
-    public partial class Inicial1 : Migration
+    /// <inheritdoc />
+    public partial class Inicial : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -33,7 +35,8 @@ namespace GreenCoinHealth.Server.Migrations
                     DietaId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Alimentolist = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -41,16 +44,19 @@ namespace GreenCoinHealth.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Dificultades",
+                name: "Ejercicios",
                 columns: table => new
                 {
-                    DificultadId = table.Column<int>(type: "int", nullable: false)
+                    EjercicioId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Repeticiones = table.Column<int>(type: "int", nullable: false),
+                    Series = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Dificultades", x => x.DificultadId);
+                    table.PrimaryKey("PK_Ejercicios", x => x.EjercicioId);
                 });
 
             migrationBuilder.CreateTable(
@@ -84,35 +90,12 @@ namespace GreenCoinHealth.Server.Migrations
                     RutinaId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Ejercicios = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Rutinas", x => x.RutinaId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "DietaAlimentos",
-                columns: table => new
-                {
-                    DietaId = table.Column<int>(type: "int", nullable: false),
-                    AlimentoId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DietaAlimentos", x => new { x.DietaId, x.AlimentoId });
-                    table.ForeignKey(
-                        name: "FK_DietaAlimentos_Alimentos_AlimentoId",
-                        column: x => x.AlimentoId,
-                        principalTable: "Alimentos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_DietaAlimentos_Dietas_DietaId",
-                        column: x => x.DietaId,
-                        principalTable: "Dietas",
-                        principalColumn: "DietaId",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -147,51 +130,6 @@ namespace GreenCoinHealth.Server.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Ejercicios",
-                columns: table => new
-                {
-                    EjercicioId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Repeticiones = table.Column<int>(type: "int", nullable: false),
-                    Series = table.Column<int>(type: "int", nullable: false),
-                    RutinaId = table.Column<int>(type: "int", nullable: false),
-                    DificultadId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Ejercicios", x => x.EjercicioId);
-                    table.ForeignKey(
-                        name: "FK_Ejercicios_Dificultades_DificultadId",
-                        column: x => x.DificultadId,
-                        principalTable: "Dificultades",
-                        principalColumn: "DificultadId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Ejercicios_Rutinas_RutinaId",
-                        column: x => x.RutinaId,
-                        principalTable: "Rutinas",
-                        principalColumn: "RutinaId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DietaAlimentos_AlimentoId",
-                table: "DietaAlimentos",
-                column: "AlimentoId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Ejercicios_DificultadId",
-                table: "Ejercicios",
-                column: "DificultadId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Ejercicios_RutinaId",
-                table: "Ejercicios",
-                column: "RutinaId");
-
             migrationBuilder.CreateIndex(
                 name: "IX_User_Id_Gender",
                 table: "User",
@@ -203,17 +141,9 @@ namespace GreenCoinHealth.Server.Migrations
                 column: "Id_Role");
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "DietaAlimentos");
-
-            migrationBuilder.DropTable(
-                name: "Ejercicios");
-
-            migrationBuilder.DropTable(
-                name: "User");
-
             migrationBuilder.DropTable(
                 name: "Alimentos");
 
@@ -221,10 +151,13 @@ namespace GreenCoinHealth.Server.Migrations
                 name: "Dietas");
 
             migrationBuilder.DropTable(
-                name: "Dificultades");
+                name: "Ejercicios");
 
             migrationBuilder.DropTable(
                 name: "Rutinas");
+
+            migrationBuilder.DropTable(
+                name: "User");
 
             migrationBuilder.DropTable(
                 name: "Gender");

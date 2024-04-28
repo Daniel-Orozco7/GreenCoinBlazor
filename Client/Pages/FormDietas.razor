@@ -1,0 +1,74 @@
+﻿@page "/dietas"
+@using GreenCoinHealth.Shared.Models;
+@inject HttpClient httpClient
+@inject NavigationManager NavigationManager
+@using System.Text.Json;
+@inject HttpClient Http
+
+<h1>Lista de Dietas</h1>
+
+<button @onclick="@(() => MostrarFormularioNuevaDieta())">Crear Nueva Dieta</button>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Alimentos</th>
+        </tr>
+    </thead>
+     <tbody>
+        @if (Dietas != null)
+        {
+            @foreach (var dieta in Dietas)
+            {
+                <tr>
+                    <td>@dieta.Nombre</td>
+                    <td>@dieta.Descripcion</td>
+                    <td>@foreach (var alimento in JsonSerializer.Deserialize<List<Alimentos>>(@dieta.Alimentolist))
+                        {
+                           <ul><li>@alimento.Nombre</li></ul>
+                        }
+                        </td>
+
+                    <td>
+                            <button @onclick="@(() => EliminarDieta(@dieta))">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody> 
+</table>
+
+@code {
+    private List<Dieta> Dietas { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Dietas = await httpClient.GetFromJsonAsync<List<Dieta>>("/api/Dietas/");
+
+    }
+
+    private void MostrarFormularioNuevaDieta()
+    {
+        NavigationManager.NavigateTo("/dietas-crear"); // Regresar al área principal del nutricionista
+    }
+
+    private async Task EditarDieta(int idDieta)
+    {
+        // Mostrar el componente de creación de dietas en modo "editar dieta"
+        // Precargar los datos de la dieta seleccionada
+    }
+    private async Task EliminarDieta(Dieta idDieta)
+    {
+        try
+        {
+            var delteresponse = await Http.DeleteFromJsonAsync<Dieta>($"api/Dietas/{idDieta.DietaId}");
+            NavigationManager.NavigateTo("/dietas");// Regresar al área principal del nutricionista
+        }catch(Exception e)
+        {
+            NavigationManager.NavigateTo("/dietas");// Regresar al área principal del nutricionista
+
+        }
+    }
+}

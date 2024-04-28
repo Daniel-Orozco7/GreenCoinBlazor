@@ -1,6 +1,7 @@
-﻿@* @page "/formulario-alimentos"
+﻿ @page "/formulario-alimentos"
 @using GreenCoinHealth.Shared.Models;
-@using HttpClientFactory
+@inject IJSRuntime JS
+@inject HttpClient httpClient
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
@@ -21,28 +22,33 @@ else
             <InputText id="nombre" class="form-control" @bind-Value="alimento.Nombre" />
         </div>
         <div class="form-group">
-            <label for="calorias">Calorías:</label>
-            <InputNumber id="calorias" class="form-control" @bind-Value="alimento.Calorias" />
+            <label for="calorias">Descripcion:</label>
+            <InputTextArea id="descripcion" class="form-control" @bind-Value="alimento.Descripcion" />
         </div>
         <div class="form-group">
-            <label for="proteinas">Proteínas (g):</label>
-            <InputNumber id="proteinas" class="form-control" @bind-Value="alimento.Proteinas" />
+            <label for="proteinas">tipo (g):</label>
+            <InputText id="tipo" class="form-control" @bind-Value="alimento.Tipo" />
         </div>
         <div class="form-group">
-            <label for="carbohidratos">Carbohidratos (g):</label>
-            <InputNumber id="carbohidratos" class="form-control" @bind-Value="alimento.Carbohidratos" />
+            <label for="carbohidratos">Precio (g):</label>
+            <InputNumber id="precio" class="form-control" @bind-Value="alimento.Precio" />
         </div>
         <div class="form-group">
-            <label for="grasas">Grasas (g):</label>
-            <InputNumber id="grasas" class="form-control" @bind-Value="alimento.Grasas" />
+            <label for="grasas">Es organico (g):</label>
+            <InputCheckbox id="organico" class="form-control" @bind-Value="alimento.EsOrganico" />
         </div>
+        <div class="form-group">
+            <label for="grasas">Origen (g):</label>
+            <InputText id="origen" class="form-control" @bind-Value="alimento.Origen" />
+        </div>
+        
 
         <button type="submit" class="btn btn-success">Guardar</button>
     </EditForm>
 }
 
 @code {
-    private Alimento alimento;
+     public Alimentos alimento;
 
     protected override async Task OnInitializedAsync()
     {
@@ -51,6 +57,12 @@ else
 
     private async Task HandleValidSubmit()
     {
+        await JS.InvokeVoidAsync("console.log", alimento);
+        // var saveResponse = await httpClient.PostAsJsonAsync<Alimentos>("/api/alimentos/", alimento);
+        // var registerResponse = await saveResponse.Content.ReadFromJsonAsync<Alimentos>();
+        
+        // await JS.InvokeVoidAsync("console.log", saveResponse);
+        // await JS.InvokeVoidAsync("console.log", registerResponse);
         if (alimento.Id == 0)
         {
             await Http.PostAsJsonAsync("api/alimentos", alimento);
@@ -60,7 +72,7 @@ else
             await Http.PutAsJsonAsync($"api/alimentos/{alimento.Id}", alimento);
         }
 
-        NavigationManager.NavigateTo("/nutricionista"); // Regresar al área principal del nutricionista
+        NavigationManager.NavigateTo("/dietas"); // Regresar al área principal del nutricionista
     }
 }
- *@
+ 

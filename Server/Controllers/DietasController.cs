@@ -23,15 +23,14 @@ namespace GreenCoinHealth.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Dieta>>> GetDietas()
         {
-            return await _context.Dietas.Include(d => d.DietaAlimentos).ThenInclude(da => da.Alimento).ToListAsync();
+            return await _context.Dietas.ToListAsync();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Dieta>> GetDieta(int id)
         {
             var dieta = await _context.Dietas
-                .Include(d => d.DietaAlimentos)
-                .ThenInclude(da => da.Alimento)
+                
                 .FirstOrDefaultAsync(d => d.DietaId == id);
 
             if (dieta == null)

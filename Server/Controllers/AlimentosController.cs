@@ -40,7 +40,7 @@ namespace GreenCoinHealth.Server.Controllers
             _context.Add(alimentos);
             await _context.SaveChangesAsync();
 
-            return new CreatedAtRouteResult("GetAlimento", new { id = alimentos.Id }, alimentos);
+            return new CreatedAtRouteResult(nameof(GetAlimentos), new { id = alimentos.Id }, alimentos);
 
         }
         [HttpPut("{id}")]

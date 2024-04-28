@@ -22,10 +22,8 @@ namespace GreenCoinHealth.Server.Data
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Alimentos> Alimentos { get; set; } = null!;
         public DbSet<Dieta> Dietas { get; set; }
-        public DbSet<DietaAlimento> DietaAlimentos { get; set; }
         public DbSet<Rutina> Rutinas { get; set; }
         public DbSet<Ejercicio> Ejercicios { get; set; }
-        public DbSet<Dificultad> Dificultades { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -96,9 +94,7 @@ namespace GreenCoinHealth.Server.Data
 
             OnModelCreatingPartial(modelBuilder);
 
-            // Configura la clave primaria compuesta para DietaAlimento
-            modelBuilder.Entity<DietaAlimento>()
-                .HasKey(da => new { da.DietaId, da.AlimentoId });
+         
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
