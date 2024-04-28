@@ -9,8 +9,9 @@
 @using System.Security.Claims;
 @inject AuthenticationStateProvider autenticacionProvider
 @inject NavigationManager navManager
+<link href="css/Login.css" rel="stylesheet">
 
-<div class="row mt-5">
+@* <div class="row mt-5">
     <div class="col-lg-4 offset-lg-4 border">
         <div class="mb-3 text-center">
             <h3>LOGIN</h3>
@@ -28,6 +29,67 @@
         </div>
     </div>
 </div>
+ *@
+<section class="h-100 gradient-form" style="background-color: #eee;">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-xl-10">
+                <div class="card rounded-3 text-black">
+                    <div class="row g-0">
+                        <div class="col-lg-6">
+                            <div class="card-body p-md-5 mx-md-4">
+
+                                <div class="text-center">
+                                    <img src="https://i.pinimg.com/736x/58/4d/6c/584d6c8a1330c879d674b53ef2c6ef37.jpg"
+                                         style="width: 185px;" alt="logo">
+                                    <h4 class="mt-1 mb-5 pb-1">Somos GreenCoinHealth</h4>
+                                </div>
+
+                                <form>
+                                    <div class="text-center mb-4">
+                                        <h3>Login</h3>
+                                    </div>
+
+                                    <div data-mdb-input-init class="form-outline mb-4">
+                                        <input type="email" id="form2Example11" class="form-control" placeholder="Correo electrónico" @bind="login.Email" />
+                                        <label class="form-label" for="form2Example11">Correo</label>
+                                    </div>
+
+                                    <div data-mdb-input-init class="form-outline mb-4">
+                                        <input type="password" id="form2Example22" class="form-control" @bind="login.Password" />
+                                        <label class="form-label" for="form2Example22">Contraseña</label>
+                                    </div>
+
+                                    <div class="text-center pt-1 mb-5 pb-1">
+                                        <button @onclick="IniciarSesion" class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3" type="button">
+                                            Login
+                                        </button>
+                                        
+                                    </div>
+
+                                    
+                                </form>
+
+                            </div>
+                        </div>
+                        <div class="col-lg-6 d-flex align-items-center gradient-custom-2">
+                            <div class="text-white px-3 py-4 p-md-5 mx-md-4">
+                                <h4 class="mb-4">Come inteligente, vive fuerte</h4>
+                                <p class="small mb-0">
+                                    "¡Bienvenido a GreenCoinHealth, tu nuevo aliado en el camino hacia un estilo de vida más saludable! 
+                                    Aquí encontrarás rutinas personalizadas y dietas balanceadas diseñadas para adaptarse a tus necesidades 
+                                    y objetivos. Ya sea que busques perder peso, ganar masa muscular o simplemente mantenerte en forma, 
+                                    nuestro compromiso es acompañarte en cada paso de tu jornada. Con consejos expertos y apoyo constante,
+                                    te ayudamos a alcanzar tus metas de bienestar. Empieza hoy y transforma tu vida con cada plato y cada movimiento."
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 @code {
     private LoginDTO login = new LoginDTO();

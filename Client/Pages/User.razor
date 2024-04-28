@@ -1,6 +1,22 @@
 ﻿@page "/usuario"
 @using Microsoft.AspNetCore.Authorization;
 @attribute [Authorize(Roles = "Usuario")]
-
+@inject NavigationManager NavigationManager
 <h1>Área vista usuario</h1>
 <p>Bienvenido usuario</p>
+
+<!-- Botón para navegar a la vista de alimentos -->
+<button class="btn btn-success" @onclick="GoToVerDietas">Ver Dietas</button>
+<button class="btn btn-success" @onclick="GoToVerRutinas">Ver Rutinas</button>
+
+@code {
+    private void GoToVerDietas()
+    {
+        NavigationManager.NavigateTo("/dietas");
+    }
+    private void GoToVerRutinas()
+    {
+        NavigationManager.NavigateTo("/rutinas");
+    }
+    
+}

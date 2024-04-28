@@ -1,0 +1,70 @@
+﻿@page "/formulario-ejercicios"
+@using GreenCoinHealth.Shared.Models;
+@inject IJSRuntime JS
+@inject HttpClient httpClient
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h3>Formulario de Ejercicios</h3>
+
+@if (ejercicio == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <EditForm Model="ejercicio" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <InputText id="nombre" class="form-control" @bind-Value="ejercicio.Nombre" />
+        </div>
+        <div class="form-group">
+            <label for="descripcion">Descripcion:</label>
+            <InputTextArea id="descripcion" class="form-control" @bind-Value="ejercicio.Descripcion" />
+        </div>
+        <div class="form-group">
+            <label for="series">series #:</label>
+            <InputNumber id="series" class="form-control" @bind-Value="ejercicio.Series" />
+        </div>
+        <div class="form-group">
+            <label for="repeticiones">Repeticiones #:</label>
+            <InputNumber id="repeticiones" class="form-control" @bind-Value="ejercicio.Repeticiones" />
+        </div>
+       
+
+
+        <button type="submit" class="btn btn-success">Guardar</button>
+    </EditForm>
+}
+
+@code {
+    public Ejercicio ejercicio;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ejercicio = new Ejercicio(); // Este sería un nuevo alimento. Para editar, necesitarías cargar un alimento existente aquí.
+    }
+
+    private async Task HandleValidSubmit()
+    {
+       
+        // var saveResponse = await httpClient.PostAsJsonAsync<Alimentos>("/api/alimentos/", alimento);
+        // var registerResponse = await saveResponse.Content.ReadFromJsonAsync<Alimentos>();
+
+        // await JS.InvokeVoidAsync("console.log", saveResponse);
+        // await JS.InvokeVoidAsync("console.log", registerResponse);
+        if (ejercicio.EjercicioId == 0)
+        {
+            await Http.PostAsJsonAsync("api/Ejercicios", ejercicio);
+        }
+        else
+        {
+            await Http.PutAsJsonAsync($"api/Ejercicios/{ejercicio.EjercicioId}", ejercicio);
+        }
+
+      //  NavigationManager.NavigateTo("/rutinas"); // Regresar al área principal del nutricionista
+    }
+}

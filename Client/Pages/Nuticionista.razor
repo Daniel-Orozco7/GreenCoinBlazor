@@ -6,12 +6,41 @@
 <h1>Área del Nutricionista</h1>
 <p>Bienvenido a tu panel de control especializado.</p>
 
-<!-- Botón para navegar a la vista de formularios -->
-<button class="btn btn-primary" @onclick="GoToFormularios">Gestionar Alimentos y Ejercicios</button>
+<!-- Botón para navegar a la vista de alimentos -->
+<button class="btn btn-success" @onclick="GoToAlimentos">Crear Alimentos</button>
+<button class="btn btn-success" @onclick="GoToDieta">ver Dietas</button>
+<button class="btn btn-success" @onclick="GoToCrearDieta">Crear Dietas</button>
+
+<!-- Botón para navegar a la vista de ejercicios -->
+<button class="btn btn-info" @onclick="GoToEjercicios">Gestionar Ejercicios</button>
+
+<button class="btn btn-info" @onclick="GoToRutinas">Gestionar Rutinas</button>
+<button class="btn btn-info" @onclick="GoToCrearRutina">Crear Rutinas</button>
 
 @code {
-    private void GoToFormularios()
+    private void GoToAlimentos()
     {
         NavigationManager.NavigateTo("/formulario-alimentos");
+    }
+    private void GoToDieta()
+    {
+        NavigationManager.NavigateTo("/dietas");
+    }
+    private void GoToCrearDieta()
+    {
+        NavigationManager.NavigateTo("/dietas-crear");
+    }
+
+    private void GoToEjercicios()
+    {
+        NavigationManager.NavigateTo("/formulario-ejercicios");
+    }
+    private void GoToRutinas()
+    {
+        NavigationManager.NavigateTo("/rutinas");
+    }
+    private void GoToCrearRutina()
+    {
+        NavigationManager.NavigateTo("/rutinas-crear");
     }
 }

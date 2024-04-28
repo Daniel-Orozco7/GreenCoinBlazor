@@ -22,23 +22,23 @@ else
             <InputText id="nombre" class="form-control" @bind-Value="alimento.Nombre" />
         </div>
         <div class="form-group">
-            <label for="calorias">Descripcion:</label>
+            <label for="descripcion">Descripcion:</label>
             <InputTextArea id="descripcion" class="form-control" @bind-Value="alimento.Descripcion" />
         </div>
         <div class="form-group">
-            <label for="proteinas">tipo (g):</label>
+            <label for="tipo">tipo (g):</label>
             <InputText id="tipo" class="form-control" @bind-Value="alimento.Tipo" />
         </div>
         <div class="form-group">
-            <label for="carbohidratos">Precio (g):</label>
+            <label for="precio">Precio (g):</label>
             <InputNumber id="precio" class="form-control" @bind-Value="alimento.Precio" />
         </div>
         <div class="form-group">
-            <label for="grasas">Es organico (g):</label>
+            <label for="organico">Es organico (g):</label>
             <InputCheckbox id="organico" class="form-control" @bind-Value="alimento.EsOrganico" />
         </div>
         <div class="form-group">
-            <label for="grasas">Origen (g):</label>
+            <label for="origen">Origen (g):</label>
             <InputText id="origen" class="form-control" @bind-Value="alimento.Origen" />
         </div>
         
@@ -71,8 +71,7 @@ else
         {
             await Http.PutAsJsonAsync($"api/alimentos/{alimento.Id}", alimento);
         }
-
-        NavigationManager.NavigateTo("/dietas"); // Regresar al área principal del nutricionista
+        await JS.InvokeVoidAsync("alert", "alimento creado con exito");
     }
 }
  

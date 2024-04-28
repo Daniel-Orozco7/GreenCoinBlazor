@@ -1,0 +1,47 @@
+﻿@page "/usuario-dietas"
+@using GreenCoinHealth.Shared.Models;
+@inject HttpClient httpClient
+@using System.Text.Json;
+
+<h3>Dietas del Usuario</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Alimentos</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Dietas != null)
+        {
+            @foreach (var dieta in Dietas)
+            {
+                <tr>
+                    <td>@dieta.Nombre</td>
+                    <td>@dieta.Descripcion</td>
+                    <td>
+                        @foreach (var alimento in JsonSerializer.Deserialize<List<Alimentos>>(@dieta.Alimentolist))
+                        {
+                            <ul><li>@alimento.Nombre</li></ul>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<Dieta> Dietas { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Recuperar el ID del usuario actual
+      //  var userId == User.Dni;// Obtener el ID del usuario actual (por ejemplo, desde la sesión)
+
+    // Realizar una petición a la API para recuperar las dietas del usuario
+    //Dietas = await httpClient.GetFromJsonAsync<List<Dieta>>($"/api/Dietas/Usuario/{userId}");
+    }
+}

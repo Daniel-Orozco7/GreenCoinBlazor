@@ -1,0 +1,101 @@
+﻿@page "/rutinas-crear"
+@inject IJSRuntime JS
+@using GreenCoinHealth.Shared.Models
+@inject HttpClient Http
+@using System.Text.Json;
+@inject NavigationManager NavigationManager
+
+
+<h1>Crear nueva Rutina</h1>
+<EditForm Model="@rutina" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="nombre">Nombre:</label>
+        <InputText id="nombre" class="form-control" @bind-Value="rutina.Nombre" />
+    </div>
+    <div class="form-group">
+        <label for="descripcion">Descripcion:</label>
+        <InputTextArea id="descripcion" class="form-control" @bind-Value="rutina.Descripcion" />
+    </div>
+    <div class="form-group">
+        <label>Ejercicios Seleccionados:</label>
+
+        <div>
+            <ul>
+                @if (EjerciciosDisponibles != null)
+                {
+                    @foreach (var ejercicio in EjerciciosDisponibles)
+                    {
+
+                        <label>
+                            <input @onchange="(() => agregarEjercicios(ejercicio))" type="checkbox" name="alimentosSeleccionados" value="@ejercicio.Nombre" />
+                            @ejercicio.Nombre
+                        </label>
+
+                    }
+                }
+            </ul>
+        </div>
+        <div class="form-group">
+            <label for="dificultad">Dificultad:</label>
+            <InputTextArea id="dificultad" class="form-control" @bind-Value="rutina.Dificultad" />
+        </div>
+
+    </div>
+
+    <button type="submit" class="btn btn-success">Guardar</button>
+</EditForm>
+
+@code {
+    private Rutina rutina = new Rutina();
+    private List<Ejercicio> EjerciciosDisponibles { get; set; }
+    private List<Ejercicio> EjerciciosSeleccionados { get; set; } = new List<Ejercicio>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+
+        EjerciciosDisponibles = await Http.GetFromJsonAsync<List<Ejercicio>>("/api/Ejercicios");
+
+        // await JS.InvokeVoidAsync("console.log", EjerciciosDisponibles);
+    }
+    private async Task agregarEjercicios(Ejercicio ejercicio)
+    {
+        if (EjerciciosSeleccionados.Contains(ejercicio))
+        {
+            EjerciciosSeleccionados.Remove(ejercicio);
+        }
+        else
+        {
+            EjerciciosSeleccionados.Add(ejercicio);
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        string jsonString = JsonSerializer.Serialize(EjerciciosSeleccionados);
+
+        rutina.Ejercicioslist = jsonString;
+        // List <Alimentos> alimentos;
+        // alimentos = JsonSerializer.Deserialize<List<Alimentos>>(jsonString);
+
+        // await JS.InvokeVoidAsync("console.log", alimentos);
+        if (rutina.RutinaId == 0)
+        {
+            await Http.PostAsJsonAsync("api/Rutinas/", rutina);
+        }
+        else
+        {
+            await Http.PutAsJsonAsync($"api/Rutinas/{rutina.RutinaId}", rutina);
+        }
+
+
+
+        await JS.InvokeVoidAsync("alert", "Rutina creada con exito");
+
+    }
+
+}

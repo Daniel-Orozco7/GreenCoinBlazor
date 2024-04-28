@@ -1,0 +1,75 @@
+﻿@page "/rutinas"
+@using GreenCoinHealth.Shared.Models;
+@inject HttpClient httpClient
+@inject NavigationManager NavigationManager
+@using System.Text.Json;
+@inject HttpClient Http
+
+<h1>Lista de Dietas</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Dificultad</th>
+            <th>Ejercicios</th>
+        </tr>
+    </thead>
+     <tbody>
+        @if (rutinas != null)
+        {
+            @foreach (var rutina in rutinas)
+            {
+                <tr>
+                    <td>@rutina.Nombre</td>
+                    <td>@rutina.Descripcion</td>
+                    <td>@rutina.Dificultad</td>
+                    <td>@foreach (var ejercicio in JsonSerializer.Deserialize<List<Ejercicio>>(@rutina.Ejercicioslist))
+                        {
+                           <ul><li>@ejercicio.Nombre</li></ul>
+                        }
+                        </td>
+
+                    <td>
+                        <button @onclick="@(() => EliminarRutina(@rutina))">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody> 
+</table>
+
+@code {
+    private List<Rutina> rutinas { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        rutinas = await httpClient.GetFromJsonAsync<List<Rutina>>("/api/Rutinas/");
+
+    }
+
+    private void MostrarFormularioNuevaRutina()
+    {
+        NavigationManager.NavigateTo("/rutinas-crear"); // Regresar al área principal del nutricionista
+    }
+
+    private async Task EditarRutina(int idRutina)
+    {
+        // Mostrar el componente de creación de dietas en modo "editar dieta"
+        // Precargar los datos de la dieta seleccionada
+    }
+    private async Task EliminarRutina(Rutina idRutina)
+    {
+        try
+        {
+            var newdelteresponse = await Http.DeleteFromJsonAsync<Rutina>($"/api/Rutinas/{idRutina.RutinaId}");
+            NavigationManager.NavigateTo("/rutinas");// Regresar al área principal del nutricionista
+        }catch(Exception e)
+        {
+            NavigationManager.NavigateTo("/rutinas");// Regresar al área principal del nutricionista
+
+        }
+    }
+}
