@@ -1,0 +1,109 @@
+﻿@page "/register"
+
+@inject HttpClient httpClient
+@using GreenCoinHealth.Shared
+@using Microsoft.AspNetCore.Components.Forms
+
+<h3>Register User</h3>
+
+@if (strSuccess != "")
+{
+    <div class="alert alert-success" role="alert">
+        @strSuccess
+    </div>
+}
+
+@if (strError != "")
+{
+    <div class="alert alert-danger" role="alert">
+        @strError
+    </div>
+}
+
+<EditForm Model="@objUser" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="ddlDniType">Tipo de documento:</label>
+        <InputSelect class="form-control" id="ddlDniType" @bind-Value="@objUser.TypeDni">
+            @foreach (var docType in Enum.GetValues(typeof(AppEnums.UserDocType)))
+            {
+                <option value="@docType">@docType</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="form-group">
+        <label for="usrDni">DNI:</label>
+        <InputText class="form-control" id="usrDni" @bind-Value="@objUser.Dni" />
+    </div>
+
+    <div class="form-group">
+        <label for="fName">Nombre:</label>
+        <InputText class="form-control" id="fName" @bind-Value="@objUser.Name" />
+    </div>
+
+    <div class="form-group">
+        <label for="usrLastName">Apellido:</label>
+        <InputText class="form-control" id="usrLastName" @bind-Value="@objUser.LastName" />
+    </div>
+
+    <div class="form-group">
+        <label for="usrUsername">Nombre de Usuario:</label>
+        <InputText class="form-control" id="usrUsername" @bind-Value="@objUser.username" />
+    </div>
+
+    <div class="form-group">
+        <label for="usrPhone">Teléfono:</label>
+        <InputText class="form-control" id="usrPhone" @bind-Value="@objUser.Phone" />
+    </div>
+
+    <div class="form-group">
+        <label for="usrEmail">Email:</label>
+        <InputText class="form-control" id="usrEmail" @bind-Value="@objUser.Email" />
+    </div>
+
+    <div class="form-group">
+        <label for="pwd">Password:</label>
+        <InputText type="password" class="form-control" id="pwd" @bind-Value="@objUser.Password" />
+    </div>
+
+    <div class="form-group">
+        <label for="pwdConfirm">Confirmar Password:</label>
+        <InputText type="password" class="form-control" id="pwdConfirm" @bind-Value="@objUser.Confirm_Password" />
+    </div>
+
+    <div class="form-group">
+        <label for="ddlGender">Género:</label>
+        <InputSelect class="form-control" id="ddlGender" @bind-Value="@objUser.Gender" required>
+            <option value="">Seleccione un género...</option>
+            @foreach (var gender in Enum.GetValues(typeof(AppEnums.UserGender)))
+            {
+                <option value="@gender">@gender</option>
+            }
+        </InputSelect>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Register</button>
+</EditForm>
+
+@code {
+    UserDTO objUser = new UserDTO() { UserRole = "2" }; // El rol es siempre "2"
+    string strError = "";
+    string strSuccess = "";
+
+    private async Task HandleValidSubmit()
+    {
+        var response = await httpClient.PostAsJsonAsync("/api/User/RegisterUser", objUser);
+        if (response.IsSuccessStatusCode)
+        {
+            strSuccess = "User successfully registered.";
+            objUser = new UserDTO() { UserRole = "2" }; // Reset form keeping role as "2"
+        }
+        else
+        {
+            strError = "Failed to register user.";
+        }
+    }
+}
