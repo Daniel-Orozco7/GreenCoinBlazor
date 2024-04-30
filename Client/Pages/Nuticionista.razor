@@ -2,8 +2,9 @@
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize(Roles = "Nutricionista")]
 @inject NavigationManager NavigationManager
+<link href="css/Nutricionista.css" rel="stylesheet">
 
-<h1>Área del Nutricionista</h1>
+@* <h1>Área del Nutricionista</h1>
 <p>Bienvenido a tu panel de control especializado.</p>
 
 <!-- Botón para navegar a la vista de alimentos -->
@@ -15,7 +16,85 @@
 <button class="btn btn-info" @onclick="GoToEjercicios">Gestionar Ejercicios</button>
 
 <button class="btn btn-info" @onclick="GoToRutinas">Gestionar Rutinas</button>
-<button class="btn btn-info" @onclick="GoToCrearRutina">Crear Rutinas</button>
+<button class="btn btn-info" @onclick="GoToCrearRutina">Crear Rutinas</button> *@
+
+<div class="container-fluid mb-5">
+    <div class="text-center mt-5">
+        <h1>Our Services</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <a href="/dietas" style="text-decoration: none; color: inherit;"> 
+            <div class="box">
+                <div class="our-services settings">
+                    <div class="icon"> <img src="https://i.imgur.com/6NKPrhO.png"> </div>
+                    <h4>Listado de dietas</h4>
+                    <p>Aqui podras ver las dietas que creaste</p>
+                </div>
+            </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+    <a href="/formulario-alimentos" style="text-decoration: none; color: inherit;"> <!-- Agrega el enlace aquí -->
+        <div class="box">
+            <div class="our-services speedup">
+                <div class="icon"> <img src="https://i.imgur.com/KMbnpFF.png"> </div>
+                <h4>Alimentos</h4>
+                <p>Aqui podras crear los alimentos que necesites para tus dietas</p>
+            </div>
+        </div>
+    </a> <!-- Cierra el enlace aquí -->
+</div>
+
+        <div class="col-md-4">
+            <a href="/dietas-crear" style="text-decoration: none; color: inherit;">
+            <div class="box">
+                <div class="our-services privacy">
+                    <div class="icon"> <img src="https://i.imgur.com/AgyneKA.png"> </div>
+                    <h4>Crear dietas</h4>
+                    <p>Aqui podras crear las dietas </p>
+                </div>
+            </div>
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <a href="/rutinas" style="text-decoration: none; color: inherit;">
+            <div class="box">
+                <div class="our-services backups">
+                    <div class="icon"> <img src="https://i.imgur.com/vdH9LKi.png"> </div>
+                    <h4>Lista de rutinas</h4>
+                    <p>Aqui podras ver las rutinas que creaste </p>
+                </div>
+            </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="/formulario-ejercicios" style="text-decoration: none; color: inherit;">
+            <div class="box">
+                <div class="our-services ssl">
+                    <div class="icon"> <img src="https://i.imgur.com/v6OnUqu.png"> </div>
+                    <h4>Ejercicios</h4>
+                    <p>Aqui podras crear los ejercicios que necesites para tus rutinas</p>
+                </div>
+            </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="/rutinas-crear" style="text-decoration: none; color: inherit;">
+            <div class="box">
+                <div class="our-services database">
+                    <div class="icon"> <img src="https://i.imgur.com/VzjZw9M.png"> </div>
+                    <h4>Crear rutinas</h4>
+                    <p>Aqui podras crear tus rutinas con los ejercicios que elijas</p>
+                </div>
+            </div>
+            </a>
+        </div>
+    </div>
+</div>
+
 
 @code {
     private void GoToAlimentos()
