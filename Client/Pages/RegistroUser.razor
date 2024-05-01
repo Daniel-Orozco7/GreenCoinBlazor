@@ -3,6 +3,7 @@
 @inject HttpClient httpClient
 @using GreenCoinHealth.Shared
 @using Microsoft.AspNetCore.Components.Forms
+@inject IJSRuntime JS
 
 <h3>Register User</h3>
 
@@ -93,17 +94,41 @@
     string strError = "";
     string strSuccess = "";
 
+
     private async Task HandleValidSubmit()
     {
-        var response = await httpClient.PostAsJsonAsync("/api/User/RegisterUser", objUser);
-        if (response.IsSuccessStatusCode)
+        try
         {
-            strSuccess = "User successfully registered.";
-            objUser = new UserDTO() { UserRole = "2" }; // Reset form keeping role as "2"
+
+            if (objUser.Gender == "Masculino")
+            {
+                objUser.Gender = "1";
+            }
+            if (objUser.Gender == "Femenimo")
+            {
+                objUser.Gender = "2";
+            }
+            if (objUser.Gender == "Otro")
+            {
+                objUser.Gender = "3";
+            }
+
+            var response = await httpClient.PostAsJsonAsync("/api/User/RegisterUser/", objUser);
+            await JS.InvokeVoidAsync("console.log", objUser);
+
+            if (response.IsSuccessStatusCode)
+            {
+                strSuccess = "User successfully registered.";
+                
+            }
+            else
+            {
+                strError = "Failed to register user.";
+            }
         }
-        else
+        catch (Exception e)
         {
-            strError = "Failed to register user.";
+            await JS.InvokeVoidAsync("console.log", e);
         }
     }
 }

@@ -3,7 +3,7 @@
 @inject HttpClient httpClient
 @using GreenCoinHealth.Shared
 @using GreenCoinHealth.Client.Extensions
-
+@inject IJSRuntime JS
 @using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.Components.Authorization;
 @inject NavigationManager navManager
@@ -245,6 +245,7 @@
 
     public async Task<List<UserDTO>> GetUsers()
     {
+        await JS.InvokeVoidAsync("console.log", "5");
         return await httpClient.GetFromJsonAsync<List<UserDTO>>("/api/User/ReadUsers");
 
     }
@@ -280,7 +281,19 @@
     {
         strSuccess = "";
         strError = "";
-
+        await JS.InvokeVoidAsync("console.log", "1");
+        if (objUser.Gender == "Masculino")
+        {
+            objUser.Gender = "1";
+        }
+        if (objUser.Gender == "Femenimo")
+        {
+            objUser.Gender = "2";
+        }
+        if (objUser.Gender == "Otro")
+        {
+            objUser.Gender = "3";
+        }
         objUser.Gender = ((int)(AppEnums.UserGender)Enum.Parse(typeof(AppEnums.UserGender), objUser.Gender)).ToString();
         objUser.UserRole = ((int)(AppEnums.UserRole)Enum.Parse(typeof(AppEnums.UserRole), objUser.UserRole)).ToString();
 
@@ -302,6 +315,24 @@
 
     async Task SaveEditUser()
     {
+        await JS.InvokeVoidAsync("console.log", "2");
+
+        if (objUser.Gender == "Masculino")
+        {
+            objUser.Gender = "1";
+        }
+        if (objUser.Gender == "Femenimo")
+        {
+            objUser.Gender = "2";
+        }
+        if (objUser.Gender == "Otro")
+        {
+            objUser.Gender = "3";
+        }
+        UserDTO UserB = await httpClient.GetFromJsonAsync<UserDTO>($"/api/User/GetUser/{objUser.Dni}");
+       // objUser.Password = UserB.Password;
+        await JS.InvokeVoidAsync("console.log", UserB);
+        await JS.InvokeVoidAsync("console.log", objUser);
         var saveResponse = await httpClient.PutAsJsonAsync<UserDTO>("/api/User/UpdateUser", objUser);
         var registerResponse = await saveResponse.Content.ReadFromJsonAsync<ResultDTO>();
 
@@ -318,11 +349,25 @@
 
         isEdit = false;
         ShowPopup = false;
+        await JS.InvokeVoidAsync("location.reload");
     }
 
 
     async Task EditUser(string userDni)
     {
+        await JS.InvokeVoidAsync("console.log", "3");
+        if (objUser.Gender == "Masculino")
+        {
+            objUser.Gender = "1";
+        }
+        if (objUser.Gender == "Femenimo")
+        {
+            objUser.Gender = "2";
+        }
+        if (objUser.Gender == "Otro")
+        {
+            objUser.Gender = "3";
+        }
         //Clear messages
         strSuccess = "";
         strError = "";
@@ -350,6 +395,7 @@
 
     private async void Submit(EditContext editContext)
     {
+        await JS.InvokeVoidAsync("console.log", "4");
         var pwdFieldIdentifier = editContext.Field("Password");
         var pdwConfirmFieldIdentifier = editContext.Field("Confirm_Password");
 

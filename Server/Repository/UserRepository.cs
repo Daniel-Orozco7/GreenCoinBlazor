@@ -94,6 +94,7 @@ public class UserRepository
                 {
                     var user = new User()
                     {
+                        
                         Dni = model.Dni,
                         TypeDni = model.TypeDni,
                         Name = textInfo.ToTitleCase(model.Name),
@@ -103,7 +104,7 @@ public class UserRepository
                         Phone = model.Phone,
                         Password = encriptPwd.EncryptPassword(model.Password),
                         IdGender = model.Gender,
-                        IdRole = "2"
+                        IdRole = model.UserRole
                     };
                     context.Users.Add(user);
                     context.SaveChanges();
@@ -351,7 +352,9 @@ public class UserRepository
                         Email = u.Email,
                         Phone = u.Phone,
                         Gender = u.IdGender,
-                        UserRole = u.IdRole
+                        UserRole = u.IdRole,
+                        Password = u.Password,
+                        Confirm_Password = u.Password
                     }).FirstOrDefault();
                 return user;
             }
