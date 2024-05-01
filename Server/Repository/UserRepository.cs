@@ -92,6 +92,18 @@ public class UserRepository
 
                 if (usuario == null)
                 {
+                    if (model.Gender == "Masculino")
+                    {
+                        model.Gender = "1";
+                    }
+                    if (model.Gender == "Femenimo")
+                    {
+                        model.Gender = "2";
+                    }
+                    if (model.Gender == "Otro")
+                    {
+                        model.Gender = "3";
+                    }
                     var user = new User()
                     {
                         
@@ -105,6 +117,7 @@ public class UserRepository
                         Password = encriptPwd.EncryptPassword(model.Password),
                         IdGender = model.Gender,
                         IdRole = model.UserRole
+
                     };
                     context.Users.Add(user);
                     context.SaveChanges();
