@@ -1,0 +1,81 @@
+﻿/*
+* ==========================================
+* CUSTOM UTIL CLASSES
+* ==========================================
+*/
+
+/* GENERAL SETTINGS FOR THE DEMO */
+body {
+    min-height: 100vh;
+    background-color: #fafafa;
+}
+
+/* STYLING FOR THE IMAGE HOVER EFFECT */
+.hover {
+    overflow: hidden;
+    position: relative;
+    width: 600px; /* Fixed width */
+    height: 450px; /* Fixed height */
+    cursor: pointer; /* Indicates the element is clickable */
+}
+
+    .hover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Ensures the image covers the area without distortion */
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: transform 0.3s, opacity 0.3s;
+    }
+
+.hover-overlay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 90;
+    transition: opacity 0.4s;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+}
+
+/* STYLING FOR THE CONTENT INSIDE THE IMAGE HOVER */
+.hover-content {
+    position: absolute;
+    z-index: 99;
+}
+
+/* SPECIFIC STYLES FOR DEMO 1 */
+.hover-1-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 20px;
+    z-index: 99;
+    transition: transform 0.4s;
+}
+
+.hover-1-description {
+    transform: translateY(0.5rem);
+    transition: transform 0.4s, opacity 0.4s;
+    opacity: 0;
+}
+
+/* HOVER EFFECTS FOR DEMO 1 */
+.hover-1:hover img {
+    transform: scale(1.05); /* Slight zoom effect */
+}
+
+.hover-1:hover .hover-overlay {
+    opacity: 0; /* Hide overlay on hover */
+}
+
+.hover-1:hover .hover-1-content {
+    transform: translateY(-20px); /* Move content up slightly on hover */
+}
+
+.hover-1:hover .hover-1-description {
+    opacity: 1;
+    transform: translateY(0); /* Reset position and show description */
+}

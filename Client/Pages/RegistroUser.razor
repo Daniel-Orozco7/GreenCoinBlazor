@@ -4,6 +4,7 @@
 @using GreenCoinHealth.Shared
 @using Microsoft.AspNetCore.Components.Forms
 @inject IJSRuntime JS
+@inject NavigationManager NavigationManager
 
 <h3>Register User</h3>
 
@@ -119,7 +120,7 @@
             if (response.IsSuccessStatusCode)
             {
                 strSuccess = "User successfully registered.";
-                
+                NavigationManager.NavigateTo("/rutinas-crear");
             }
             else
             {

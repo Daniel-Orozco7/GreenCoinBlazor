@@ -2,12 +2,8 @@
 @using Microsoft.AspNetCore.Authorization;
 @attribute [Authorize(Roles = "Usuario")]
 @inject NavigationManager NavigationManager
-<h1>Área vista usuario</h1>
-<p>Bienvenido usuario</p>
+<link href="css/Usuario.css" rel="stylesheet">
 
-<!-- Botón para navegar a la vista de alimentos -->
-<button class="btn btn-success" @onclick="GoToVerDietas">Ver Dietas</button>
-<button class="btn btn-success" @onclick="GoToVerRutinas">Ver Rutinas</button>
 
 @code {
     private void GoToVerDietas()
@@ -20,3 +16,38 @@
     }
     
 }
+<div class="container py-5">
+    <header class="text-center">
+        <h1 class="display-4 font-weight-bold">Bienvenido</h1>
+    </header>
+
+    <!-- DEMO 1 -->
+    <div class="py-5">
+        <h3 class="font-weight-bold mb-0"></h3>
+        <p class="font-italic text-muted mb-4"></p>
+        <div class="row">
+            <!-- DEMO 1 Item-->
+            <div class="col-lg-6 mb-3 mb-lg-0" @onclick="GoToVerDietas">
+                <div class="hover hover-1 text-white rounded">
+                    <img src="/img/wawa.webp" alt="">
+                    <div class="hover-overlay"></div>
+                    <div class="hover-1-content px-5 py-4">
+                        <h3 class="hover-1-title text-uppercase font-weight-bold mb-0"> <span class="font-weight-light">Ver Dietas</span></h3>
+                        <p class="hover-1-description font-weight-light mb-0">Haz clic para ver las dietas disponibles.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- DEMO 1 Item-->
+            <div class="col-lg-6" @onclick="GoToVerRutinas">
+                <div class="hover hover-1 text-white rounded">
+                    <img src="/img/Cbombas.webp" alt="">
+                    <div class="hover-overlay"></div>
+                    <div class="hover-1-content px-5 py-4">
+                        <h3 class="hover-1-title text-uppercase font-weight-bold mb-0"> <span class="font-weight-light">Ver Rutinas</span></h3>
+                        <p class="hover-1-description font-weight-light mb-0">Haz clic para ver las rutinas de ejercicios.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
