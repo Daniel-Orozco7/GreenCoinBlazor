@@ -10,26 +10,8 @@
 @inject AuthenticationStateProvider autenticacionProvider
 @inject NavigationManager navManager
 <link href="css/Login.css" rel="stylesheet">
+<script src="js/olvidoContraseña.js"></script>
 
-@* <div class="row mt-5">
-    <div class="col-lg-4 offset-lg-4 border">
-        <div class="mb-3 text-center">
-            <h3>LOGIN</h3>
-        </div>
-        <div class="mb-3">
-            <label>Correo</label>
-            <input @bind="login.Email" class="form-control" />
-        </div>
-        <div class="mb-3">
-            <label>Contraseña</label>
-            <input type="password" @bind="login.Password" class="form-control" />
-        </div>
-        <div class="mb-3">
-            <button @onclick="IniciarSesion" class="btn btn-primary">Login</button>
-        </div>
-    </div>
-</div>
- *@
 <section class="h-100 gradient-form" style="background-color: #eee;">
     <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
@@ -51,25 +33,23 @@
                                     </div>
 
                                     <div data-mdb-input-init class="form-outline mb-4">
-                                        <input type="email" id="form2Example11" class="form-control" placeholder="Correo electrónico" @bind="login.Email" />
                                         <label class="form-label" for="form2Example11">Correo</label>
+                                        <input type="email" id="form2Example11" class="form-control" placeholder="Correo electrónico" @bind="login.Email" />
                                     </div>
 
                                     <div data-mdb-input-init class="form-outline mb-4">
-                                        <input type="password" id="form2Example22" class="form-control" @bind="login.Password" />
                                         <label class="form-label" for="form2Example22">Contraseña</label>
+                                        <input type="password" id="form2Example22" class="form-control" placeholder="Contraseña" @bind="login.Password" />
                                     </div>
-
+                                    <button type="button" class="btn btn-link" onclick="OlvidoContrasena()">¿Olvidaste tu contraseña?</button>
                                     <div class="text-center pt-1 mb-5 pb-1">
                                         <button @onclick="IniciarSesion" class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3" type="button">
                                             Login
                                         </button>
                                         
-                                    </div>
 
-                                    
+                                    </div>               
                                 </form>
-
                             </div>
                         </div>
                         <div class="col-lg-6 d-flex align-items-center gradient-custom-2">
@@ -126,5 +106,9 @@
             }
         }
        
+    }
+    private void OlvidoContrasena()
+    {
+        navManager.NavigateTo("/ForgetPassword");
     }
 }

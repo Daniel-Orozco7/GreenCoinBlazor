@@ -1,0 +1,68 @@
+﻿/* Importar fuentes */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;500;600;700;800&display=swap');
+
+/* Estilos generales para textos y etiquetas */
+.text-title {
+    font-family: 'Bebas Neue', sans-serif;
+    color: #000080;
+    letter-spacing: 2px;
+    font-size: 1.5em; /* Tamaño de fuente para textos importantes */
+}
+
+label {
+    font-size: 1.3em;
+    font-weight: 600; /* Añadir negrita al texto de las etiquetas */
+}
+
+h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2em; /* Tamaño de fuente para el título */
+    color: #000080;
+    margin-bottom: 20px; /* Agregar espacio inferior */
+    text-align: center; /* Centrar solo el título */
+}
+
+/* Estilos para campos de entrada */
+.form-control {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.2em;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: border-color 0.3s ease-in-out;
+}
+
+    .form-control:focus {
+        outline: none; /* Eliminar borde al enfocar */
+        border-color: #b28181; /* Cambiar color del borde al enfocar */
+        box-shadow: 0px 0px 6px #b28181; /* Agregar sombra al enfocar */
+    }
+
+/* Estilos para botones */
+.btn-primary {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3em;
+    background-color: #000080;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    margin-top: 20px; /* Añadir margen superior al botón */
+}
+
+    .btn-primary:hover {
+        background-color: #003366; /* Cambiar color al pasar el ratón */
+    }
+
+/* Estilos específicos para el contenedor de registro */
+.registration-container {
+    max-width: 600px; /* Ancho máximo del contenedor */
+    margin: auto; /* Centrar el contenedor horizontalmente */
+    padding: 20px; /* Espacio interno */
+    border-radius: 10px; /* Bordes redondeados */
+    background-color: #fff; /* Color de fondo del contenedor (blanco) */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    /* text-align: center; No centrar todo el contenido */
+}

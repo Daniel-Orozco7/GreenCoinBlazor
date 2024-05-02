@@ -3,9 +3,13 @@
 @inject HttpClient httpClient
 @using GreenCoinHealth.Shared
 @using Microsoft.AspNetCore.Components.Forms
+@inject NavigationManager NavigationManager
 @inject IJSRuntime JS
 
-<h3>Register User</h3>
+<script src="js/passwordToggle.js"></script>
+<link href="css/register.css" rel="stylesheet">
+<div class="registration-container">
+<h1>Registro</h1>
 
 @if (strSuccess != "")
 {
@@ -36,17 +40,28 @@
     </div>
 
     <div class="form-group">
-        <label for="usrDni">DNI:</label>
+        <label for="usrDni">Número de Identificación:</label>
         <InputText class="form-control" id="usrDni" @bind-Value="@objUser.Dni" />
+    </div>
+    
+    <div class="form-group">
+        <label for="ddlGender">Género:</label>
+        <InputSelect class="form-control" id="ddlGender" @bind-Value="@objUser.Gender" required>
+            <option value="">Seleccione un género...</option>
+            @foreach (var gender in Enum.GetValues(typeof(AppEnums.UserGender)))
+            {
+                <option value="@gender">@gender</option>
+            }
+        </InputSelect>
     </div>
 
     <div class="form-group">
-        <label for="fName">Nombre:</label>
+        <label for="fName">Nombres:</label>
         <InputText class="form-control" id="fName" @bind-Value="@objUser.Name" />
     </div>
 
     <div class="form-group">
-        <label for="usrLastName">Apellido:</label>
+        <label for="usrLastName">Apellidos:</label>
         <InputText class="form-control" id="usrLastName" @bind-Value="@objUser.LastName" />
     </div>
 
@@ -61,56 +76,54 @@
     </div>
 
     <div class="form-group">
-        <label for="usrEmail">Email:</label>
+        <label for="usrEmail">Correo Electronico:</label>
         <InputText class="form-control" id="usrEmail" @bind-Value="@objUser.Email" />
     </div>
-
     <div class="form-group">
-        <label for="pwd">Password:</label>
-        <InputText type="password" class="form-control" id="pwd" @bind-Value="@objUser.Password" />
+        <label for="pwd">Contraseña:</label>
+        <div class="input-group">
+            <InputText type="password" class="form-control" id="pwd" @bind-Value="@objUser.Password" />
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('pwd')">Mostrar</button>
+                </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="pwdConfirm">Confirmar Contraseña:</label>
+        <div class="input-group">
+            <InputText type="password" class="form-control" id="pwdConfirm" @bind-Value="@objUser.Confirm_Password" />
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('pwdConfirm')">Mostrar</button>
+                </div>
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="pwdConfirm">Confirmar Password:</label>
-        <InputText type="password" class="form-control" id="pwdConfirm" @bind-Value="@objUser.Confirm_Password" />
-    </div>
 
-    <div class="form-group">
-        <label for="ddlGender">Género:</label>
-        <InputSelect class="form-control" id="ddlGender" @bind-Value="@objUser.Gender" required>
-            <option value="">Seleccione un género...</option>
-            @foreach (var gender in Enum.GetValues(typeof(AppEnums.UserGender)))
-            {
-                <option value="@gender">@gender</option>
-            }
-        </InputSelect>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Register</button>
+    <button type="submit" class="btn btn-primary">Registrarse</button>
 </EditForm>
+</div>
 
 @code {
     UserDTO objUser = new UserDTO() { UserRole = "2" }; // El rol es siempre "2"
     string strError = "";
     string strSuccess = "";
 
-
     private async Task HandleValidSubmit()
     {
         try
         {
-
-            if (objUser.Gender == "Masculino")
+            // Mapear el género seleccionado a un valor numérico (opcional)
+            switch (objUser.Gender)
             {
-                objUser.Gender = "1";
-            }
-            if (objUser.Gender == "Femenimo")
-            {
-                objUser.Gender = "2";
-            }
-            if (objUser.Gender == "Otro")
-            {
-                objUser.Gender = "3";
+                case "Masculino":
+                    objUser.Gender = "1";
+                    break;
+                case "Femenino":
+                    objUser.Gender = "2";
+                    break;
+                case "Otro":
+                    objUser.Gender = "3";
+                    break;
             }
 
             var response = await httpClient.PostAsJsonAsync("/api/User/RegisterUser/", objUser);
@@ -118,17 +131,24 @@
 
             if (response.IsSuccessStatusCode)
             {
-                strSuccess = "User successfully registered.";
-                
+                strSuccess = "Usuario registrado exitosamente.";
+                NavigationManager.NavigateTo("/UserCreated");
             }
             else
             {
-                strError = "Failed to register user.";
+                strError = "Error al registrar usuario.";
             }
         }
         catch (Exception e)
         {
             await JS.InvokeVoidAsync("console.log", e);
         }
+    }
+}
+@code {
+
+    private async Task ShowPassword(string fieldId)
+    {
+        await JS.InvokeVoidAsync("showPassword", fieldId);
     }
 }

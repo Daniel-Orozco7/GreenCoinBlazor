@@ -1,0 +1,38 @@
+﻿.center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 0 10px; /* Agregar espacio a los lados */
+}
+
+.box {
+    width: 300px;
+    padding: 20px;
+    border-radius: 20px; /* Bordes más redondeados para mayor simetría */
+    background-color: #f0f0f0;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%; /* Para hacer la imagen redonda */
+    object-fit: cover;
+    margin-bottom: 20px; /* Espacio adicional bajo la imagen */
+}
+
+.message {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+    font-weight: bold; /* Hacer el texto más audaz */
+    margin: 0; /* Eliminar márgenes predeterminados para un diseño más compacto */
+}
+
+/* Estilos adicionales para pantallas más pequeñas */
+@media (max-width: 768px) {
+    .box {
+        width: 80%; /* Utilizar el 80% del ancho en pantallas más pequeñas */
+    }
