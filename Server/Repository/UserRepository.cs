@@ -122,37 +122,37 @@ public class UserRepository
                     context.Users.Add(user);
                     context.SaveChanges();
 
-                    string asunto = "Bienvenido/a a GreenCoin Health";
+                    string asunto = "Bienvenido a GreenCoin Health";
                     string mensaje = @"
-                    <html>
-                    <head>
-                        <meta charset=""UTF-8"">
-                        <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
-                        <style>
-                            body {
-                                font-family: Arial, sans-serif;
-                                background-color: #f4f4f4;
-                                margin: 0;
-                                padding: 0;
-                            }
-                            .container {
-                                background-color: #fff;
-                                width: 80%;
-                                margin: 20px auto;
-                                padding: 20px;
-                                box-shadow: 0 0 10px rgba(0,0,0,0.1);
-                            }
-                            h1 {
-                                color: #333;
-                            }
-                            p {
-                                color: #666;
-                                font-size: 16px;
-                                line-height: 1.5;
-                            }
-                            .footer {
-                                text-align: center;
-                                font-size: 12px;
+                        <html>
+                        <head>
+                            <meta charset=""UTF-8"">
+                            <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+                            <style>
+                                body {
+                                    font-family: Arial, sans-serif;
+                                    background-color: #f4f4f4;
+                                    margin: 0;
+                                    padding: 0;
+                                }
+                                .container {
+                                    background-color: #fff;
+                                    width: 80%;
+                                    margin: 20px auto;
+                                    padding: 20px;
+                                    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                                }
+                                h1 {
+                                    color: #333;
+                                }
+                                p {
+                                    color: #666;
+                                    font-size: 16px;
+                                    line-height: 1.5;
+                                }
+                                .footer {
+                                    text-align: center;
+                                    font-size: 12px;
                                 color: #999;
                                 margin-top: 20px;
                             }
@@ -160,8 +160,9 @@ public class UserRepository
                     </head>
                 <body>
                 <div class=""container"">
-                    <h1>¡Bienvenido/a a GreenCoin Health!</h1>
-                    <p>Hola<strong> [name]</strong></p>
+                    <h1>¡Te damos la Bienvenida a GreenCoin Health!</h1>
+                    <img src=""https://i.ibb.co/DKgrbGB/OIG1.jpg"" alt=""Descripción de la imagen"">
+                    <p>Hola <strong>[name],</strong></p>
                     <p><strong>Bienvenido a GreenCoin Health:</strong> Tu compañero en el camino hacia una vida saludable y sostenible.</p>
                     <p>Te damos la más cordial bienvenida a GreenCoin Health, donde te acompañaremos en tu viaje hacia un estilo de vida más saludable y sostenible.</p>
                     <p>Nuestra aplicación te permite realizar un seguimiento de tu ingesta diaria de alimentos, acceder a contenido educativo sobre nutrición, y lo más importante, vincular la información nutricional con la sostenibilidad.</p>
@@ -169,7 +170,7 @@ public class UserRepository
                     <p>¡Gracias por unirte a nosotros en este emocionante viaje hacia un futuro más saludable y sostenible!</p>
                     <div class=""footer"">
                         <p>Este es un correo automático, por favor no responder a este mensaje.</p>
-                    </div>
+            </div>
                 </div>
             </body>
         </html>";
@@ -214,6 +215,7 @@ public class UserRepository
     }
     public static bool Mail(MailDTO model)
     {
+        EncriptPwd encryptor = new EncriptPwd();
         Mail m = new Mail();
         bool result = false;
 
@@ -224,10 +226,8 @@ public class UserRepository
                 var us = context.Users.FirstOrDefault(u => u.Email == model.Email_Addressee);
                 if (us != null)
                 {
-                    
-                    string asunto = "Recuperación de contraseña";
-                    EncriptPwd encryptor = new EncriptPwd();
                     string descryptedPassword = encryptor.DecryptPassword(us.Password);
+                    string asunto = "Recuperación de contraseña";
                     string mensaje = @"<html>
                                         <head>
                                             <meta charset=""UTF-8"">
