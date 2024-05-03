@@ -30,7 +30,7 @@ namespace GreenCoinHealth.Server.Utilities
 
                         var smtp = new SmtpClient("")
                         {
-                            Credentials = new System.Net.NetworkCredential("greencoinhealth@gmail.com", "Sergio_M10S"),
+                            Credentials = new System.Net.NetworkCredential("greencoinhealth@gmail.com", "atlrpgqzegshhgqp"),
                             Host = "smtp.gmail.com",
                             Port = 587,
                             EnableSsl = true

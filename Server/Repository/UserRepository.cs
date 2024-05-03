@@ -161,10 +161,10 @@ public class UserRepository
                 <body>
                 <div class=""container"">
                     <h1>¡Bienvenido/a a GreenCoin Health!</h1>
-                    <p>Hola<strong>{name}</strong></p>
+                    <p>Hola<strong> [name]</strong></p>
                     <p><strong>Bienvenido a GreenCoin Health:</strong> Tu compañero en el camino hacia una vida saludable y sostenible.</p>
                     <p>Te damos la más cordial bienvenida a GreenCoin Health, donde te acompañaremos en tu viaje hacia un estilo de vida más saludable y sostenible.</p>
-                    <p>Nuestra aplicación te permite realizar un seguimiento de tu ingesta diaria de alimentos, acceder a contenido educativo sobre nutrición, gestionar tus finanzas, y lo más importante, vincular la información nutricional con la sostenibilidad.</p>
+                    <p>Nuestra aplicación te permite realizar un seguimiento de tu ingesta diaria de alimentos, acceder a contenido educativo sobre nutrición, y lo más importante, vincular la información nutricional con la sostenibilidad.</p>
                     <p>Estamos emocionados de tener la oportunidad de ayudarte en este camino. Si necesitas ayuda o tienes alguna pregunta, no dudes en contactarnos.</p>
                     <p>¡Gracias por unirte a nosotros en este emocionante viaje hacia un futuro más saludable y sostenible!</p>
                     <div class=""footer"">
@@ -216,6 +216,7 @@ public class UserRepository
     {
         Mail m = new Mail();
         bool result = false;
+
         using (var context = new GreenCoinHealthContext())
         {
             try
@@ -223,7 +224,10 @@ public class UserRepository
                 var us = context.Users.FirstOrDefault(u => u.Email == model.Email_Addressee);
                 if (us != null)
                 {
+                    
                     string asunto = "Recuperación de contraseña";
+                    EncriptPwd encryptor = new EncriptPwd();
+                    string descryptedPassword = encryptor.DecryptPassword(us.Password);
                     string mensaje = @"<html>
                                         <head>
                                             <meta charset=""UTF-8"">
@@ -260,9 +264,9 @@ public class UserRepository
                                     <body>
                                     <div class=""container"">
                                         <h1>Recuperación de Contraseña</h1>
-                                        <p>Hola,</p>
+                                        <p>Hola, <strong>[Name]</strong></p>
                                         <p>Has solicitado recuperar tu contraseña para tu cuenta. Tu contraseña actual es:</p>
-                                        <p><strong>{Password}</strong></p>
+                                        <p><strong>[Password]</strong></p>
                                         <p>Por razones de seguridad, te recomendamos cambiar tu contraseña inmediatamente después de iniciar sesión.</p>
                                         <div class=""footer"">
                                             <p>Este es un correo automático, por favor no responder a este mensaje.</p>
@@ -270,7 +274,8 @@ public class UserRepository
                                     </div>
                                 </body>
                             </html>";
-                    mensaje = mensaje.Replace("[Password]", us.Password);
+                    mensaje = mensaje.Replace("[Name]",  us.Name);
+                    mensaje = mensaje.Replace("[Password]", descryptedPassword);
                     m.SendMail(model.Email_Addressee, asunto, mensaje);
                     result = true;
                 }
