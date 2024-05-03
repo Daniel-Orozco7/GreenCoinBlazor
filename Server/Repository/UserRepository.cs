@@ -89,7 +89,7 @@ public class UserRepository
             {
                 var usuario = context.Users.SingleOrDefault(u => u.Dni == model.Dni);
                 TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
-
+                ////no tocar mamavrgas :)
                 if (usuario == null)
                 {
                     if (model.Gender == "Masculino")
