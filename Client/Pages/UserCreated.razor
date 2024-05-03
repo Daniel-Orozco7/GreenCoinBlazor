@@ -1,0 +1,24 @@
+﻿@page "/UserCreated"
+@inject NavigationManager NavigationManager
+
+<link href="css/UserCreated.css" rel="stylesheet">
+<div class="center-container">
+    <div class="box">
+        <img src="img/comprobado.png" alt="Comprobación" />
+        <p class="message">El usuario ha sido registrado con satisfacción</p>
+    </div>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        NavigateToLogin();
+    }
+
+    private async void NavigateToLogin()
+    {
+        //Redirige al Login despues de 3 segundos
+        await Task.Delay(3000); // Espera 3 segundos
+        NavigationManager.NavigateTo("/login", forceLoad: true);
+    }
+}

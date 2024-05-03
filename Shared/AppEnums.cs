@@ -11,7 +11,6 @@ namespace GreenCoinHealth.Shared
         public enum UserDocType
         {
             Seleccione,
-            DNI,
             CC,
             CE,
             PAS
@@ -27,7 +26,6 @@ namespace GreenCoinHealth.Shared
 
         public enum UserGender : int
         {
-            Seleccione = 0,
             Masculino = 1,
             Femenino = 2,
             Otro = 3

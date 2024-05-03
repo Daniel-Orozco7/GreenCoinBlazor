@@ -29,7 +29,7 @@ namespace GreenCoinHealth.Server.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=DANIEL;Database=GreenCoinHealthDB;Trusted_Connection=True;MultipleActiveResultSets=True;Trust Server Certificate=true");
+                optionsBuilder.UseSqlServer("workstation id=GreenCoinHealthDB.mssql.somee.com;packet size=4096;user id=SergioM10_SQLLogin_1;pwd=fwczoab2iy;data source=GreenCoinHealthDB.mssql.somee.com;persist security info=False;initial catalog=GreenCoinHealthDB;TrustServerCertificate=True");
             }
         }
 
