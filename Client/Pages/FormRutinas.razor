@@ -5,13 +5,13 @@
 @using System.Text.Json;
 @inject HttpClient Http
 
-<h1>Lista de Dietas</h1>
+<h1>Lista de Rutinas</h1>
 
 
 <table class="table">
     <thead>
         <tr>
-            <th>Nombre</th>
+            <th>Nombre</th>s
             <th>Descripción</th>
             <th>Dificultad</th>
             <th>Ejercicios</th>
@@ -29,6 +29,7 @@
                     <td>@foreach (var ejercicio in JsonSerializer.Deserialize<List<Ejercicio>>(@rutina.Ejercicioslist))
                         {
                            <ul><li>@ejercicio.Nombre</li></ul>
+                            <ul><li>@ejercicio.Descripcion</li></ul>
                         }
                         </td>
 
