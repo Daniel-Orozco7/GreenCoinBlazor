@@ -1,18 +1,50 @@
 ﻿@page "/counter"
+@using GreenCoinHealth.Shared.Models;
+@using System.Text.Json;
+@inject HttpClient httpClient
+<h1>Lista de Dietas</h1>
 
-<PageTitle>Counter</PageTitle>
-
-<h1>Counter</h1>
-
-<p role="status">Current count: @currentCount</p>
-
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Alimentos</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Dietas != null)
+        {
+            @foreach (var dieta in Dietas)
+            {
+                <tr>
+                    <td>@dieta.Nombre</td>
+                    <td>@dieta.Descripcion</td>
+                    <td>
+                        @foreach (var alimento in JsonSerializer.Deserialize<List<Alimentos>>(dieta.Alimentolist))
+                        {
+                            <ul>
+                                <li>@alimento.Nombre</li>
+                            </ul>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3">Cargando...</td>
+            </tr>
+        }
+    </tbody>
+</table>
 
 @code {
-    private int currentCount = 0;
+    private List<Dieta> Dietas { get; set; }
 
-    private void IncrementCount()
+    protected override async Task OnInitializedAsync()
     {
-        currentCount++;
+        Dietas = await httpClient.GetFromJsonAsync<List<Dieta>>("/api/Dietas/");
     }
 }

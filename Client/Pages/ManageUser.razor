@@ -48,9 +48,10 @@
                                 <button class="btn btn-primary" @onclick="() => EditUser(user.Dni)">
                                     Edit
                                 </button>
-                                <a href='/user/delete/@user.Dni' class="btn btn-danger" role="button">
+                                
+                                <button class="btn btn-dark" @onclick="() => DeleteUser(user.Dni)">
                                     Delete
-                                </a>
+                                </button>
                             </td>
                         </tr>
                     }
@@ -330,7 +331,7 @@
             objUser.Gender = "3";
         }
         UserDTO UserB = await httpClient.GetFromJsonAsync<UserDTO>($"/api/User/GetUser/{objUser.Dni}");
-       // objUser.Password = UserB.Password;
+        // objUser.Password = UserB.Password;
         await JS.InvokeVoidAsync("console.log", UserB);
         await JS.InvokeVoidAsync("console.log", objUser);
         var saveResponse = await httpClient.PutAsJsonAsync<UserDTO>("/api/User/UpdateUser", objUser);
@@ -384,8 +385,25 @@
 
 
     }
-    async Task DeleteUser()
+    async Task DeleteUser(string userDni)
     {
+        // Enviar solicitud de eliminación al endpoint del servidor
+        var response = await httpClient.DeleteAsync($"/api/User/DeleteUser/{userDni}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            // Si la eliminación fue exitosa, actualiza la lista de usuarios en el cliente.
+            userList = userList.Where(u => u.Dni != userDni).ToList();
+            strSuccess = "Usuario eliminado correctamente.";
+        }
+        else
+        {
+            // Si hubo un error, lee el mensaje del servidor.
+            var errorResult = await response.Content.ReadFromJsonAsync<ResultDTO>();
+            strError = errorResult?.Mensaje ?? "Error desconocido al eliminar el usuario.";
+        }
+
+        StateHasChanged(); // Notifica a Blazor que la UI debe actualizarse
     }
     void ClosePopup()
     {

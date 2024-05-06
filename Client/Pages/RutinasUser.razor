@@ -1,0 +1,55 @@
+﻿@page "/rutinas-usuario"
+@using GreenCoinHealth.Shared.Models
+@inject HttpClient Http
+@using System.Text.Json;
+@inject HttpClient httpClient
+
+<h1>Lista de Rutinas</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Dificultad</th>
+            <th>Ejercicios</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (rutinas != null)
+        {
+            @foreach (var rutina in rutinas)
+            {
+                <tr>
+                    <td>@rutina.Nombre</td>
+                    <td>@rutina.Descripcion</td>
+                    <td>@rutina.Dificultad</td>
+                    <td>
+                        @foreach (var ejercicio in JsonSerializer.Deserialize<List<Ejercicio>>(rutina.Ejercicioslist))
+                        {
+                            <ul>
+                                <li>@ejercicio.Nombre</li>
+                                <li>@ejercicio.Descripcion</li>
+                            </ul>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4">Cargando...</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<Rutina> rutinas { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        rutinas = await httpClient.GetFromJsonAsync<List<Rutina>>("/api/Rutinas/");
+    }
+}
