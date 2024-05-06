@@ -265,8 +265,8 @@ public class UserRepository
                                     <div class=""container"">
                                         <h1>Recuperación de Contraseña</h1>
                                         <p>Hola, <strong>[Name]</strong></p>
-                                        <p>Has solicitado recuperar tu contraseña para tu cuenta. Tu contraseña actual es:</p>
-                                        <p><strong>[Password]</strong></p>
+                                        <p>Has solicitado recuperar tu contraseña para tu cuenta.</p>
+                                        <p>Tu contraseña actual es: <strong>[Password]</strong></p>
                                         <p>Por razones de seguridad, te recomendamos cambiar tu contraseña inmediatamente después de iniciar sesión.</p>
                                         <div class=""footer"">
                                             <p>Este es un correo automático, por favor no responder a este mensaje.</p>

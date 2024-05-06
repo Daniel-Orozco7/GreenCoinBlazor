@@ -41,6 +41,12 @@
                                         <label class="form-label" for="form2Example22">Contraseña</label>
                                         <input type="password" id="form2Example22" class="form-control" placeholder="Contraseña" @bind="login.Password" />
                                     </div>
+                                    @if(!string.IsNullOrEmpty(errorMessage))
+                                    {
+                                        <div class="alert alert-danger" role="alert">
+                                            @errorMessage
+                                        </div>
+                                    }
                                     <button type="button" class="btn btn-link" onclick="OlvidoContrasena()">¿Olvidaste tu contraseña?</button>
                                     <div class="text-center pt-1 mb-5 pb-1">
                                         <button @onclick="IniciarSesion" class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3" type="button">
@@ -73,6 +79,7 @@
 
 @code {
     private LoginDTO login = new LoginDTO();
+    private string errorMessage="";
 
     private async Task IniciarSesion()
     {
@@ -104,6 +111,18 @@
             {
                 navManager.NavigateTo("/"); // Redirigir a la página de inicio por defecto
             }
+        }
+        else if(loginResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            errorMessage = "Usuario no registrado";
+        }
+        else if(loginResponse.StatusCode==System.Net.HttpStatusCode.Unauthorized)
+        {
+            errorMessage = "Correo y/o Contraseña incorrectos";
+        }
+        else
+        {
+            errorMessage = "Error al iniciar sesión";
         }
        
     }

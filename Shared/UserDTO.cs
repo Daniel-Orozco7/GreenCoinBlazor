@@ -4,10 +4,10 @@ namespace GreenCoinHealth.Shared
 {
     public class UserDTO
     {
-        [Required(ErrorMessage = "El DNI es obligatorio.")]
+        [Required(ErrorMessage = "El documento es obligatorio.")]
         public string Dni { get; set; }
 
-        [Required(ErrorMessage = "El Tipo de DNI es obligatorio.")]
+        [Required(ErrorMessage = "El Tipo de documento es obligatorio.")]
         public string TypeDni { get; set; }
 
         [Required(ErrorMessage = "El Nombre es obligatorio.")]
