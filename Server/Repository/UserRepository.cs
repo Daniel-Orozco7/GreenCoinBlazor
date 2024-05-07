@@ -330,8 +330,10 @@ public class UserRepository
                                  ,Name = usr.Name
                                  ,LastName = usr.LastName
                                  ,username = usr.Username
+                                 ,Gender = usr.IdGender
                                  ,Phone = usr.Phone
                                  ,Email = usr.Email
+                                 ,UserRole = usr.IdRole
                              }).ToList();
 
                 return users;

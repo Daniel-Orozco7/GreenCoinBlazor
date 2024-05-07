@@ -9,10 +9,10 @@
 @inject NavigationManager navManager
 @attribute [Authorize]
 
-
 <AuthorizeView>
     <Authorized Context="authContext">
-        <h3>ManageUser</h3>
+        <link href="css/table.css" rel="stylesheet">
+        <h1>Usuarios Registrados</h1>
 
         @if (userList == null)
         {
@@ -20,16 +20,18 @@
         }
         else
         {
-            <table class="table table-striped align-middle table-bordered">
-                <thead class="table-primary">
+            <table id="customers">
+                <thead >
                     <tr>
-                        <th>Dni</th>
                         <th>Tipo de documento</th>
+                        <th>Documento</th>
                         <th>Nombre</th>
                         <th>Apellido</th>
-                        <th>Nombre de usuario</th>
+                        <th>Nombre de Usuario</th>
+                        <th>Género</th>
                         <th>Teléfono</th>
-                        <th>Email</th>
+                        <th>Correo</th>
+                        <th>Rol</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -37,28 +39,28 @@
                     @foreach (var user in userList)
                     {
                         <tr>
+                            <td>@(user.TypeDni == "CC" ? "Cédula de Ciudadania" : (user.TypeDni == "TI" ? "Tarjeta de Identidad" : (user.TypeDni == "CE" ? "Cédula de Estrajeria" : "Pasaporte")))</td>
                             <td>@user.Dni</td>
-                            <td>@user.TypeDni</td>
                             <td>@user.Name</td>
                             <td>@user.LastName</td>
                             <td>@user.username</td>
+                            <td>@(user.Gender == "1" ? "Masculino" : (user.Gender == "2" ? "Femenino" : "Otro"))</td>
                             <td>@user.Phone</td>
                             <td>@user.Email</td>
+                            <td>@(user.UserRole == "1" ? "Administrador" : (user.UserRole == "2" ? "Usuario" : "Nutricionista"))</td>
                             <td>
-                                <button class="btn btn-primary" @onclick="() => EditUser(user.Dni)">
-                                    Edit
+                                <button class="btn btn-outline-success" @onclick="() => EditUser(user.Dni)">
+                                    Editar
                                 </button>
-                                
-                                <button class="btn btn-dark" @onclick="() => DeleteUser(user.Dni)">
-                                    Delete
+
+                                <button class="btn btn-outline-danger" @onclick="() => DeleteUser(user.Dni)">
+                                    Eliminar
                                 </button>
                             </td>
                         </tr>
                     }
                 </tbody>
-
             </table>
-
             @if (ShowPopup)
             {
                 <!-- This is the popup to create or edit a user -->
@@ -66,7 +68,7 @@
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h3 class="modal-title">Edit User</h3>
+                                <h3 class="modal-title">Información</h3>
                                 <!-- Button to close the popup -->
                                 <button type="button" class="close"
                                         @onclick="ClosePopup">
@@ -92,7 +94,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row mb-1">
-                                        <label class="col-sm-3 col-form-label" for="usrDni">DNI</label>
+                                        <label class="col-sm-3 col-form-label" for="usrDni">Documento</label>
                                         <div class="col-sm-9">
                                             <InputText Class="form-control" id="usrDni" @bind-Value="@objUser.Dni" />
                                             <ValidationMessage For="@(() => objUser.Dni)" />
@@ -108,12 +110,11 @@
                                         </div>
                                     </div>
                                     <div class="form-group row mb-1">
-                                        <label class="col-sm-3 col-form-label" for="usrDni">DNI</label>
+                                        <label class="col-sm-3 col-form-label" for="usrDni">Documento</label>
                                         <div class="col-sm-9">
                                             <InputText Class="form-control" disabled="disabled" id="usrDni" @bind-Value="@objUser.Dni" />
                                         </div>
                                     </div>
-                                    
                                 }
                                     <div class="form-group row mb-1">
                                         <label class="col-sm-3 col-form-label" for="ddlGender">Género</label>
@@ -127,30 +128,6 @@
                                             <ValidationMessage For="@(() => objUser.Gender)" />
                                         </div>
                                     </div>
-                                    <div class="form-group row mb-1">
-                                        <label class="col-sm-3 col-form-label" for="usrName">Nombre Usuario</label>
-                                        <div class="col-sm-9">
-                                            <InputText Class="form-control" id="usrName" @bind-Value="@objUser.username" />
-                                            <ValidationMessage For="@(() => objUser.username)" />
-                                        </div>
-                                    </div>
-                                    @if (!isEdit)
-                                    {
-                                        <div class="form-group row mb-1">
-                                            <label class="col-sm-3 col-form-label" for="pwd">Password</label>
-                                            <div class="col-sm-9">
-                                                <InputText type="password" Class="form-control" id="pwd" @bind-Value="@objUser.Password" />
-                                                <ValidationMessage For="@(() => objUser.Password)" />
-                                            </div>
-                                        </div>
-                                        <div class="form-group row mb-1">
-                                            <label class="col-sm-3 col-form-label" for="pwdConfirm">Confirme Password</label>
-                                            <div class="col-sm-9">
-                                                <InputText type="password" Class="form-control" id="pwdConfirm" @bind-Value="@objUser.Confirm_Password" />
-                                                <ValidationMessage For="@(() => objUser.Confirm_Password)" />
-                                            </div>
-                                        </div>
-                                    }
                                     <div class="form-group row mb-1">
                                         <label class="col-sm-3 col-form-label" for="fName">Nombre</label>
                                         <div class="col-sm-9">
@@ -166,7 +143,14 @@
                                         </div>
                                     </div>
                                     <div class="form-group row mb-1">
-                                        <label class="col-sm-3 col-form-label" for="usrEmail">Email</label>
+                                        <label class="col-sm-3 col-form-label" for="usrName">Nombre Usuario</label>
+                                        <div class="col-sm-9">
+                                            <InputText Class="form-control" id="usrName" @bind-Value="@objUser.username" />
+                                            <ValidationMessage For="@(() => objUser.username)" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-1">
+                                        <label class="col-sm-3 col-form-label" for="usrEmail">Correo</label>
                                         <div class="col-sm-9">
                                             <InputText Class="form-control" id="usrEmail" @bind-Value="@objUser.Email" />
                                             <ValidationMessage For="@(() => objUser.Email)" />
@@ -191,6 +175,43 @@
                                             <ValidationMessage For="@(() => objUser.UserRole)" />
                                         </div>
                                     </div>
+                                    @if (!isEdit)
+                                    {
+                                        <div class="form-group row mb-1">
+                                            <label class="col-sm-3 col-form-label" for="pwd">Contraseña</label>
+                                            <div class="col-sm-9">
+                                                @if (showPasswords)
+                                                {
+                                                    <InputText Class="form-control" id="pwd" @bind-Value="@objUser.Password" />
+                                                }
+                                                else
+                                                {
+                                                    <InputText type="password" Class="form-control" id="pwd" @bind-Value="@objUser.Password" />
+                                                }
+                                                <ValidationMessage For="@(() => objUser.Password)" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-1">
+                                            <label class="col-sm-3 col-form-label" for="pwdConfirm">Confirme Contraseña</label>
+                                            <div class="col-sm-9">
+                                                @if (showPasswords)
+                                                {
+                                                    <InputText Class="form-control" id="pwdConfirm" @bind-Value="@objUser.Confirm_Password" />
+                                                }
+                                                else
+                                                {
+                                                    <InputText type="password" Class="form-control" id="pwdConfirm" @bind-Value="@objUser.Confirm_Password" />
+                                                }
+                                                <ValidationMessage For="@(() => objUser.Confirm_Password)" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-1">
+                                            <label class="col-sm-3 col-form-label">Mostrar Contraseñas</label>
+                                            <div class="col-sm-9">
+                                                <InputCheckbox @bind-Value="showPasswords">Mostrar contraseñas</InputCheckbox>
+                                            </div>
+                                        </div>
+                                    }
                                     <br />
                                     <br />
                                     <div>
@@ -201,11 +222,11 @@
                                     <div class="row flex-xl-nowrap">
                                     @if (!isEdit)
                                     {
-                                        <button class="btn btn btn-primary btn-lg btn-block" type="submit">Save</button>
+                                        <button class="btn btn btn-primary btn-lg btn-block" type="submit">Guardar</button>
                                     }
                                     else
                                     {
-                                        <button class="btn btn-primary" @onclick="SaveEditUser">Add User</button>
+                                        <button class="btn btn-primary" @onclick="SaveEditUser">Añadir Usuario</button>
                                     }
                                     </div>
                                 </EditForm>
@@ -214,9 +235,9 @@
                     </div>
                 </div>
             }
-            <button class="btn btn-primary" @onclick="AddNewUser">Add User</button>
-        }
+            <button class="btn btn-outline-primary" @onclick="AddNewUser">Añadir Usuario</button>
 
+        }
     </Authorized>
 </AuthorizeView>
 
@@ -234,7 +255,7 @@
     string strSuccess = "";
     // To enable showing the Popup
     bool ShowPopup = false;
-    bool isEdit = false;
+    private bool isEdit = false;
     private bool canSendData;
 
     protected override async Task OnInitializedAsync()
@@ -263,20 +284,6 @@
         // Open the Popup
         ShowPopup = true;
     }
-
-    // async Task SaveUser()
-    // {
-    //     strSuccess = "";
-    //     strError = "";
-
-    //     objUser.Gender = ((int)(AppEnums.UserGender)Enum.Parse(typeof(AppEnums.UserGender), objUser.Gender)).ToString();
-    //     objUser.UserRole = ((int)(AppEnums.UserRole)Enum.Parse(typeof(AppEnums.UserRole), objUser.UserRole)).ToString();
-
-    //     if (!isEdit)
-    //         RegisterUser();
-    //     else
-    //         UpdateUser();
-    // }
 
     async Task SaveUser()
     {
@@ -378,7 +385,6 @@
         objUser.Gender = Enum.GetName(typeof(AppEnums.UserGender), Convert.ToInt32(objUser.Gender));
         objUser.UserRole = Enum.GetName(typeof(AppEnums.UserRole), Convert.ToInt32(objUser.UserRole));
 
-
         // Open the Popup
         ShowPopup = true;
         isEdit = true;
@@ -409,6 +415,7 @@
     {
         // Close the Popup
         ShowPopup = false;
+        isEdit = false;
     }
 
     private async void Submit(EditContext editContext)
@@ -443,4 +450,12 @@
             await SaveUser();
 
     }
+    bool showPasswords = false;
+
+    private void ToggleShowPasswords()
+    {
+        showPasswords = !showPasswords;
+    }
+
 }
+

@@ -12,6 +12,7 @@ namespace GreenCoinHealth.Shared
         {
             Seleccione,
             CC,
+            TI,
             CE,
             PAS
         }
@@ -26,6 +27,7 @@ namespace GreenCoinHealth.Shared
 
         public enum UserGender : int
         {
+            Seleccione = 0,
             Masculino = 1,
             Femenino = 2,
             Otro = 3

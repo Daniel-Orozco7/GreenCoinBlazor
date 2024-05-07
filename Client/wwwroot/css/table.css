@@ -1,0 +1,47 @@
+﻿#customers {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    border-radius: 10px; /* Bordes redondeados */
+    overflow: hidden; /* Para asegurar que los bordes redondeados se apliquen correctamente */
+
+}
+
+    #customers td, #customers th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    #customers tr:nth-child(even) {
+        background-color: #FFFEFE;
+    }
+
+    #customers tr:hover {
+        background-color: #ddd;
+    }
+
+    #customers th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #2F7414;
+        color: white;
+    }
+
+th, td {
+    font-size: 16px; /* Cambia el tamaño según tu preferencia */
+    margin-top: 10px; /* Espaciado superior */
+}
+
+.btn-custom {
+    font-size: 16px; /* Tamaño de fuente deseado */
+    padding: 10px 20px; /* Espaciado interno */
+    /* Otros estilos según necesites */
+
+}
+h1 {
+    text-align: center;
+}
+/*body {
+    background-color: #e6f7e2;*/ /* Color verde claro (puedes ajustar el código de color según tu preferencia) */
+/*}*/

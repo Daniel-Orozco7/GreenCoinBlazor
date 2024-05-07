@@ -91,26 +91,38 @@
     <div class="form-group">
         <label for="pwd">Contraseña:</label>
         <div class="input-group">
-            <InputText type="password" class="form-control" id="pwd" @bind-Value="@objUser.Password" />
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('pwd')">Mostrar</button>
-                </div>
-        </div>
+            @if(showPasswords)
+            {
+                <InputText type="text" class="form-control" id="pwd" @bind-Value="@objUser.Password" />
+            }
+            else
+            {
+                <InputText type="password" class="form-control" id="pwd" @bind-Value="@objUser.Password" />
+            }
             <ValidationMessage For="@(()=>objUser.Password)" />
+        </div>
     </div>
 
     <div class="form-group">
         <label for="pwdConfirm">Confirmar Contraseña:</label>
         <div class="input-group">
-            <InputText type="password" class="form-control" id="pwdConfirm" @bind-Value="@objUser.Confirm_Password" />
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('pwdConfirm')">Mostrar</button>
-                </div>
+            @if(showPasswords)
+            {
+                <InputText type="text" class="form-control" id="pwdConfirm" @bind-Value="@objUser.Confirm_Password" />
+            }
+            else
+            {
+                <InputText type="password" class="form-control" id="pwdConfirm" @bind-Value="@objUser.Confirm_Password" />
+            }
+                <ValidationMessage For="@(()=>objUser.Confirm_Password)" />
         </div>
-            <ValidationMessage For="@(()=>objUser.Confirm_Password)" />
     </div>
-
-
+    <div class="form-group row mb-1">
+        <label class="col-sm-3 col-form-label">Mostrar Contraseñas</label>
+            <div class="col-sm-9 d-flex align-items-center">
+            <InputCheckbox @bind-Value="showPasswords">Mostrar contraseña</InputCheckbox>
+        </div>
+    </div>
     <button type="submit" class="btn btn-primary">Registrarse</button>
 </EditForm>
 </div>
@@ -119,6 +131,7 @@
     UserDTO objUser = new UserDTO() { UserRole = "2" }; // El rol es siempre "2"
     string strError = "";
     string strSuccess = "";
+
 
     private async Task HandleValidSubmit()
     {
@@ -156,11 +169,11 @@
             await JS.InvokeVoidAsync("console.log", e);
         }
     }
-}
-@code {
+    bool showPasswords = false;
 
-    private async Task ShowPassword(string fieldId)
+    private void ToggleShowPasswords()
     {
-        await JS.InvokeVoidAsync("showPassword", fieldId);
+        showPasswords = !showPasswords;
     }
 }
+

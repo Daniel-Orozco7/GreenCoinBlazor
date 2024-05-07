@@ -1,12 +1,12 @@
-﻿// scripts.js
-function togglePassword(inputId) {
-    const inputElement = document.getElementById(inputId);
-    const currentType = inputElement.type;
+﻿function TogglePasswords() {
+    var pwdInput = document.getElementById('pwd');
+    var pwdConfirmInput = document.getElementById('pwdConfirm');
 
-    // Cambiar el tipo de input basado en su estado actual
-    if (currentType === 'password') {
-        inputElement.type = 'text';
+    if (pwdInput.type === 'password' && pwdConfirmInput.type === 'password') {
+        pwdInput.type = 'text';
+        pwdConfirmInput.type = 'text';
     } else {
-        inputElement.type = 'password';
+        pwdInput.type = 'password';
+        pwdConfirmInput.type = 'password';
     }
 }
