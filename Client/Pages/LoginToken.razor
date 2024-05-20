@@ -1,6 +1,9 @@
 ﻿@page "/login-token"
 
+@using GreenCoinHealth.Client.Extensions
+@using GreenCoinHealth.Shared
 @using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @inject HttpClient Http
 @inject NavigationManager navManager
 @inject AuthenticationStateProvider autenticacionProvider
@@ -51,7 +54,8 @@
         // Por ejemplo, creando un claim de identidad y actualizando el estado de autenticación
         var sesionUsuario = new SessionDTO
             {
-                Email = email,
+                
+                Correo = email,
                 // Puedes agregar más propiedades aquí según sea necesario
             };
 

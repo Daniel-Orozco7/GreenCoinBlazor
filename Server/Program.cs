@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("appsettings.json");
 
 // Configuración del secret key para JWT
-var secretKey = builder.Configuration["Jwt:Key"];
+var secretKey = builder.Configuration["Settings:Key"];
 var keyBytes = Encoding.UTF8.GetBytes(secretKey);
 
 // Agregar servicios al contenedor
