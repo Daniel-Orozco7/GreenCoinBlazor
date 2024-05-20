@@ -41,7 +41,7 @@ namespace GreenCoinHealth.Server.Controllers
             }
         }
         [HttpPost("validate-token")]
-        public async Task<IActionResult> ValidateTokenAsync([FromBody] string Token)
+        public async Task<IActionResult> ValidateToken([FromBody] string Token)
         {
             if(_userRepository.ValidateToken(Token, out string email))
             {

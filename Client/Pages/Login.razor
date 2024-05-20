@@ -80,11 +80,11 @@
 
     private async Task IniciarSesion()
     {
-        var loginResponse = await httpClient.PostAsJsonAsync<LoginDTO>("/api/Authentication/Login", login);
+        var loginResponse = await httpClient.PostAsJsonAsync<LoginDTO>("/api/Autentication/Login", login);
         if (loginResponse.IsSuccessStatusCode)
         {
             // Si el login es exitoso, genera y envía el token
-            var tokenResponse = await httpClient.PostAsJsonAsync<string>("/api/send-token", login.Email);
+            var tokenResponse = await httpClient.PostAsJsonAsync<string>("/api/User/send-token", login.Email);
             if (tokenResponse.IsSuccessStatusCode)
             {
                 // Redirige a la vista de ingreso del token

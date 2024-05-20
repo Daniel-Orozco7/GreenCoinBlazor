@@ -203,7 +203,7 @@ public class UserRepository
     public string GenerateJWTToken(string email)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+        var key = Encoding.ASCII.GetBytes(_configuration["Settings:Key"]);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[] { new Claim("email", email) }),
@@ -229,7 +229,7 @@ public class UserRepository
     public bool ValidateToken(string token, out string email)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+        var key = Encoding.ASCII.GetBytes(_configuration["Settings:Key"]);
         email = null;
 
         try
