@@ -1,61 +1,76 @@
 using GreenCoinHealth.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.ResponseCompression;
-
-
 using System.Text;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("appsettings.json");
-var secretKey = builder.Configuration.GetSection("Settings").GetSection("Key").ToString();
+
+// Configuración del secret key para JWT
+var secretKey = builder.Configuration["Jwt:Key"];
 var keyBytes = Encoding.UTF8.GetBytes(secretKey);
 
-
-
-// Add services to the container.
-
+// Agregar servicios al contenedor
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSwaggerGen();
 
-
 var conectionString = builder.Configuration.GetConnectionString("GreenCoinHealth");
-
 builder.Services.AddDbContext<GreenCoinHealthContext>(
     options => options.UseSqlServer(conectionString)
-    );
+);
+
+// Configurar autenticación JWT
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(keyBytes)
+    };
+});
+
+builder.Services.AddScoped<UserRepository>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configuración del pipeline HTTP
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
-
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
     app.UseWebAssemblyDebugging();
 }
 else
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication(); // Añadir esta línea
+app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();

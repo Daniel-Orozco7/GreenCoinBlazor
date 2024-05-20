@@ -1,0 +1,92 @@
+﻿@page "/login-token"
+
+@using Microsoft.AspNetCore.Components.Authorization
+@inject HttpClient Http
+@inject NavigationManager navManager
+@inject AuthenticationStateProvider autenticacionProvider
+
+<h3>Enter Token</h3>
+
+<EditForm Model="@this" OnValidSubmit="ValidateToken">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="token">Token</label>
+        <InputText @bind-Value="token" id="token" placeholder="Enter your token" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Validate Token</button>
+</EditForm>
+
+<p>@message</p>
+
+@code {
+    private string token;
+    private string message;
+
+    private async Task ValidateToken()
+    {
+        var response = await Http.PostAsJsonAsync("auth/validate-token", token);
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadFromJsonAsync<TokenValidationResponse>();
+            message = $"Token is valid. Email: {result.Email}";
+
+            // Aquí debes iniciar la sesión del usuario utilizando el email recibido
+            await IniciarSesionUsuario(result.Email);
+
+            // Redirige al usuario basado en su rol
+            await RedirigirSegunRol();
+        }
+        else
+        {
+            message = "Invalid token";
+        }
+    }
+
+    private async Task IniciarSesionUsuario(string email)
+    {
+        // Aquí deberías tener lógica para iniciar la sesión del usuario
+        // Por ejemplo, creando un claim de identidad y actualizando el estado de autenticación
+        var sesionUsuario = new SessionDTO
+            {
+                Email = email,
+                // Puedes agregar más propiedades aquí según sea necesario
+            };
+
+        var autenticacionExt = (AuthExtension)autenticacionProvider;
+        await autenticacionExt.ActualizarEstadoAutenticacion(sesionUsuario);
+    }
+
+    private async Task RedirigirSegunRol()
+    {
+        // Obtener el estado de autenticación actual
+        var user = (await autenticacionProvider.GetAuthenticationStateAsync()).User;
+        var roles = user.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+
+        // Redirigir basado en el rol
+        if (roles.Contains("Nutricionista"))
+        {
+            navManager.NavigateTo("/nutricionista");
+        }
+        else if (roles.Contains("Usuario"))
+        {
+            navManager.NavigateTo("/usuario");
+        }
+        else if (roles.Contains("Administrador"))
+        {
+            navManager.NavigateTo("/ManageUser");
+        }
+        else
+        {
+            navManager.NavigateTo("/"); // Redirigir a la página de inicio por defecto
+        }
+    }
+
+    public class TokenValidationResponse
+    {
+        public string Message { get; set; }
+        public string Email { get; set; }
+    }
+}

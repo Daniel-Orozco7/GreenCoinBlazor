@@ -7,9 +7,20 @@ using System.Net.Mail;
 using System.Text.RegularExpressions;
 using GreenCoinHealth.Shared;
 using GreenCoinHealth.Server.Data;
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 public class UserRepository
 {
+    private readonly IConfiguration _configuration;
+    public UserRepository(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
     public string validate_user(UserDTO user)
     {
         if (string.IsNullOrWhiteSpace(user.Name))
@@ -189,7 +200,60 @@ public class UserRepository
         }
     }
 
-    public static bool Login(string email, string password)
+    public string GenerateJWTToken(string email)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new[] { new Claim("email", email) }),
+            Expires = DateTime.UtcNow.AddMinutes(2), // Token válido por 2 minutos
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return tokenHandler.WriteToken(token);
+    }
+    public void SendtokenEmail(string email, string token)
+    {
+        try 
+        {
+            Mail m = new Mail();
+            string asunto = "Tu token de inicio de sesión";
+            string mensaje = $"Tu token de inicio de sesión es: {token}";
+            m.SendMail(email, asunto, mensaje);
+        } catch (Exception ex) 
+        {
+            Console.WriteLine($"Error al enviar el token por correo: {ex.Message}");
+        }
+    }
+    public bool ValidateToken(string token, out string email)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+        email = null;
+
+        try
+        {
+            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero
+            }, out SecurityToken validatedToken);
+
+            var jwtToken = (JwtSecurityToken)validatedToken;
+            email = jwtToken.Claims.First(x => x.Type == "email").Value;
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public static  bool Login(string email, string password)
     {
         EncriptPwd encriptPwd = new EncriptPwd();
         using (var context = new GreenCoinHealthContext())

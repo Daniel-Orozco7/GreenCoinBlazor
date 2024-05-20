@@ -6,7 +6,7 @@
 @using GreenCoinHealth.Client.Extensions
 @using GreenCoinHealth.Shared
 @using Microsoft.AspNetCore.Components.Authorization
-@using System.Security.Claims;
+@using System.Security.Claims
 @inject AuthenticationStateProvider autenticacionProvider
 @inject NavigationManager navManager
 <link href="css/Login.css" rel="stylesheet">
@@ -22,8 +22,7 @@
                             <div class="card-body p-md-5 mx-md-4">
 
                                 <div class="text-center">
-                                    <img src="https://i.pinimg.com/736x/58/4d/6c/584d6c8a1330c879d674b53ef2c6ef37.jpg"
-                                         style="width: 185px;" alt="logo">
+                                    <img src="https://i.pinimg.com/736x/58/4d/6c/584d6c8a1330c879d674b53ef2c6ef37.jpg" style="width: 185px;" alt="logo">
                                     <h4 class="mt-1 mb-5 pb-1">Somos GreenCoinHealth</h4>
                                 </div>
 
@@ -41,7 +40,7 @@
                                         <label class="form-label" for="form2Example22">Contraseña</label>
                                         <input type="password" id="form2Example22" class="form-control" placeholder="Contraseña" @bind="login.Password" />
                                     </div>
-                                    @if(!string.IsNullOrEmpty(errorMessage))
+                                    @if (!string.IsNullOrEmpty(errorMessage))
                                     {
                                         <div class="alert alert-danger" role="alert">
                                             @errorMessage
@@ -52,9 +51,7 @@
                                         <button @onclick="IniciarSesion" class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3" type="button">
                                             Login
                                         </button>
-                                        
-
-                                    </div>               
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -62,9 +59,9 @@
                             <div class="text-white px-3 py-4 p-md-5 mx-md-4">
                                 <h4 class="mb-4">Come inteligente, vive fuerte</h4>
                                 <p class="small mb-0">
-                                    "¡Bienvenido a GreenCoinHealth, tu nuevo aliado en el camino hacia un estilo de vida más saludable! 
-                                    Aquí encontrarás rutinas personalizadas y dietas balanceadas diseñadas para adaptarse a tus necesidades 
-                                    y objetivos. Ya sea que busques perder peso, ganar masa muscular o simplemente mantenerte en forma, 
+                                    "¡Bienvenido a GreenCoinHealth, tu nuevo aliado en el camino hacia un estilo de vida más saludable!
+                                    Aquí encontrarás rutinas personalizadas y dietas balanceadas diseñadas para adaptarse a tus necesidades
+                                    y objetivos. Ya sea que busques perder peso, ganar masa muscular o simplemente mantenerte en forma,
                                     nuestro compromiso es acompañarte en cada paso de tu jornada. Con consejos expertos y apoyo constante,
                                     te ayudamos a alcanzar tus metas de bienestar. Empieza hoy y transforma tu vida con cada plato y cada movimiento."
                                 </p>
@@ -79,44 +76,30 @@
 
 @code {
     private LoginDTO login = new LoginDTO();
-    private string errorMessage="";
+    private string errorMessage = "";
 
     private async Task IniciarSesion()
     {
-        var loginResponse = await httpClient.PostAsJsonAsync<LoginDTO>("/api/Autentication/Login", login);
+        var loginResponse = await httpClient.PostAsJsonAsync<LoginDTO>("/api/Authentication/Login", login);
         if (loginResponse.IsSuccessStatusCode)
         {
-            var sesionUsuario = await loginResponse.Content.ReadFromJsonAsync<SessionDTO>();
-            var autenticacionExt = (AuthExtension)autenticacionProvider;
-            await autenticacionExt.ActualizarEstadoAutenticacion(sesionUsuario);
-
-            // Obtener el rol del usuario
-            var user = (await autenticacionProvider.GetAuthenticationStateAsync()).User;
-            var roles = user.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
-
-            // Redireccionar basado en el rol
-            if (roles.Contains("Nutricionista"))
+            // Si el login es exitoso, genera y envía el token
+            var tokenResponse = await httpClient.PostAsJsonAsync<string>("/auth/send-token", login.Email);
+            if (tokenResponse.IsSuccessStatusCode)
             {
-                navManager.NavigateTo("/nutricionista");
-            }
-            else if (roles.Contains("Usuario"))
-            {
-                navManager.NavigateTo("/usuario");
-            }
-            else if (roles.Contains("Administrador"))
-            {
-                navManager.NavigateTo("/ManageUser");
+                // Redirige a la vista de ingreso del token
+                navManager.NavigateTo("/login-token");
             }
             else
             {
-                navManager.NavigateTo("/"); // Redirigir a la página de inicio por defecto
+                errorMessage = "Error al enviar el token";
             }
         }
-        else if(loginResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
+        else if (loginResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
             errorMessage = "Usuario no registrado";
         }
-        else if(loginResponse.StatusCode==System.Net.HttpStatusCode.Unauthorized)
+        else if (loginResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             errorMessage = "Correo y/o Contraseña incorrectos";
         }
@@ -124,8 +107,8 @@
         {
             errorMessage = "Error al iniciar sesión";
         }
-       
     }
+
     private void OlvidoContrasena()
     {
         navManager.NavigateTo("/ForgetPassword");

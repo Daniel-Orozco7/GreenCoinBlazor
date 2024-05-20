@@ -1,23 +1,69 @@
 ﻿using GreenCoinHealth.Server.Data;
 using GreenCoinHealth.Server.Models;
 using GreenCoinHealth.Shared;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
+using System.Security.Claims;
 
 namespace GreenCoinHealth.Server.Controllers
 {
+    
     [ApiController]
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
         private readonly GreenCoinHealthContext _context;
-        
-        public UserController(GreenCoinHealthContext context)
+        private readonly UserRepository _userRepository;
+
+        public UserController(GreenCoinHealthContext context, UserRepository userRepository)
         {
             _context = context;
+            _userRepository = userRepository;
+        }
+
+        [HttpPost("send-token")]
+        public IActionResult SendToken([FromBody] string email)
+        {
+            var token = _userRepository.GenerateJWTToken(email);
+            if (token == null)
+            {
+                return BadRequest(new { Mensaje = "El correo no se encuentra registrado" });
+            }
+            else
+            {
+                _userRepository.SendtokenEmail(email, token);
+                return Ok(new { Mensaje = "Token enviado correctamente" });
+            }
+        }
+        [HttpPost("validate-token")]
+        public async Task<IActionResult> ValidateTokenAsync([FromBody] string Token)
+        {
+            if(_userRepository.ValidateToken(Token, out string email))
+            {
+                // Crear claims basado en la información del usuario
+                var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, email),
+                new Claim(ClaimTypes.Email, email)
+                // Puedes añadir más claims según sea necesario
+            };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+                // Autenticar al usuario
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+                return Ok(new { Mensaje = "Token valido" });
+            }
+            else
+            {
+                return Unauthorized("Token invalido");
+            }
         }
         //POST: api/User
         [HttpPost]
@@ -50,9 +96,7 @@ namespace GreenCoinHealth.Server.Controllers
             try
             {
 
-                var usR = new UserRepository();
-
-                var users = usR.ReadUsers();
+                var users = _userRepository.ReadUsers();
 
                 if (users != null)
                 {
