@@ -49,7 +49,7 @@ namespace GreenCoinHealth.Server.Controllers
                 var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, email),
-                new Claim(ClaimTypes.Email, email)
+                new Claim(ClaimTypes.Email, email), 
                 // Puedes añadir más claims según sea necesario
             };
 

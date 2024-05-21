@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +26,11 @@ var conectionString = builder.Configuration.GetConnectionString("GreenCoinHealth
 builder.Services.AddDbContext<GreenCoinHealthContext>(
     options => options.UseSqlServer(conectionString)
 );
-
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/api/Autentication/Login";
+    });
 // Configurar autenticación JWT
 builder.Services.AddAuthentication(options =>
 {

@@ -50,16 +50,25 @@
 
     private async Task IniciarSesionUsuario(string email)
     {
+        var response = await Http.GetFromJsonAsync<SessionDTO>($"/api/User/Login?email={email}");
         // Aquí deberías tener lógica para iniciar la sesión del usuario
         // Por ejemplo, creando un claim de identidad y actualizando el estado de autenticación
-        var sesionUsuario = new SessionDTO
-            {   
-                Correo = email,
-                // Puedes agregar más propiedades aquí según sea necesario
-            };
 
-        var autenticacionExt = (AuthExtension)autenticacionProvider;
-        await autenticacionExt.ActualizarEstadoAutenticacion(sesionUsuario);
+        if(response != null)
+        {
+            var sesionUsuario = new SessionDTO
+                {
+                    Correo = email,
+                    Nombre = response.Nombre,
+                    Rol = response.Rol
+                    
+                    // Puedes agregar más propiedades aquí según sea necesario
+                };
+
+            var autenticacionExt = (AuthExtension)autenticacionProvider;
+            await autenticacionExt.ActualizarEstadoAutenticacion(sesionUsuario);
+
+        }
     }
 
     private async Task RedirigirSegunRol()
