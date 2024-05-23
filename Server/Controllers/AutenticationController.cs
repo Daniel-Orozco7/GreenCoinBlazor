@@ -16,12 +16,10 @@ namespace GreenCoinHealth.Server.Controllers
     public class AutenticationController : ControllerBase
     {
         EncriptPwd encript = new EncriptPwd();
-        private readonly string? secretKey;
         private readonly GreenCoinHealthContext _context;
 
-        public AutenticationController(IConfiguration config, GreenCoinHealthContext context)
+        public AutenticationController(GreenCoinHealthContext context)
         {
-            secretKey = config.GetSection("Settings").GetSection("Key").ToString();
             _context = context;
         }
 

@@ -1,5 +1,6 @@
 ﻿@using GreenCoinHealth.Client.Shared
 @using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @inject NavigationManager navManager
 
 <CascadingAuthenticationState>
@@ -7,19 +8,36 @@
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
-
                     @{
-                        // Si el usuario no está autorizado y no está autenticado, redirige a la página de login
-                        if (!context.User.Identity?.IsAuthenticated ?? true)
+                        // Verificar si el usuario está autenticado
+                        if (context.User.Identity?.IsAuthenticated ?? false)
                         {
-                            navManager.NavigateTo("/login", forceLoad: true);
+                            // Obtener los roles del usuario
+                            var roles = ((ClaimsIdentity)context.User.Identity)?.Claims
+                            .Where(c => c.Type == ClaimTypes.Role)
+                            .Select(c => c.Value)
+                            .ToList();
+
+                            // Redirigir según los roles del usuario
+                            if (roles.Contains("Usuario"))
+                            {
+                                navManager.NavigateTo("/usuario", forceLoad: true);
+                            }
+                            else if (roles.Contains("Administrador"))
+                            {
+                                navManager.NavigateTo("/administrador", forceLoad: true);
+                            }
+                            else
+                            {
+                                <p class="alert alert-danger">No está autorizado para ver esta página.</p>
+                            }
                         }
                         else
                         {
-                            <p class="alert alert-danger">No está autorizado para ver esta página.</p>
+                            // Si el usuario no está autenticado, redirigir a la página de inicio de sesión
+                            navManager.NavigateTo("/login", forceLoad: true);
                         }
                     }
-
                 </NotAuthorized>
                 <Authorizing>
                     <p>Cargando...</p>

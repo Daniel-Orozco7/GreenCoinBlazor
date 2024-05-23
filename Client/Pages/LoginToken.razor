@@ -1,5 +1,4 @@
 ﻿@page "/login-token"
-
 @using GreenCoinHealth.Client.Extensions
 @using GreenCoinHealth.Shared
 @using Microsoft.AspNetCore.Components.Authorization
@@ -30,75 +29,67 @@
 
     private async Task ValidateToken()
     {
-        var response = await Http.PostAsJsonAsync("/api/User/validate-token", token);
-        if (response.IsSuccessStatusCode)
+        try
         {
-            var result = await response.Content.ReadFromJsonAsync<TokenValidationResponse>();
-            message = $"Token is valid. Email: {result.Email}";
+            var response = await Http.PostAsJsonAsync("/api/User/validate-token", token);
 
-            // Aquí debes iniciar la sesión del usuario utilizando el email recibido
-            await IniciarSesionUsuario(result.Email);
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<TokenValidationResponse>();
 
-            // Redirige al usuario basado en su rol
-            await RedirigirSegunRol();
-        }
-        else
-        {
-            message = "Invalid token";
-        }
-    }
-
-    private async Task IniciarSesionUsuario(string email)
-    {
-        var response = await Http.GetFromJsonAsync<SessionDTO>($"/api/User/Login?email={email}");
-        // Aquí deberías tener lógica para iniciar la sesión del usuario
-        // Por ejemplo, creando un claim de identidad y actualizando el estado de autenticación
-
-        if(response != null)
-        {
-            var sesionUsuario = new SessionDTO
+                if (result != null)
                 {
-                    Correo = email,
-                    Nombre = response.Nombre,
-                    Rol = response.Rol
-                    
-                    // Puedes agregar más propiedades aquí según sea necesario
-                };
+                    message = $"Token is valid. Email: {result.Email}, Role: {result.Role}";
 
-            var autenticacionExt = (AuthExtension)autenticacionProvider;
-            await autenticacionExt.ActualizarEstadoAutenticacion(sesionUsuario);
-
+                    // Redirigir al usuario basado en su rol
+                    await RedirigirSegunRol(result.Role);
+                }
+                else
+                {
+                    message = "Invalid token response";
+                }
+            }
+            else
+            {
+                message = $"Error: {response.StatusCode} - {response.ReasonPhrase}";
+            }
+        }
+        catch (Exception ex)
+        {
+            message = $"Error: {ex.Message}";
         }
     }
 
-    private async Task RedirigirSegunRol()
+    private async Task RedirigirSegunRol(string role)
     {
-        // Obtener el estado de autenticación actual
-        var user = (await autenticacionProvider.GetAuthenticationStateAsync()).User;
-        var roles = user.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
-
-        // Redirigir basado en el rol
-        if (roles.Contains("Nutricionista"))
+        if (!string.IsNullOrWhiteSpace(role))
         {
-            navManager.NavigateTo("/nutricionista");
-        }
-        else if (roles.Contains("Usuario"))
-        {
-            navManager.NavigateTo("/usuario");
-        }
-        else if (roles.Contains("Administrador"))
-        {
-            navManager.NavigateTo("/ManageUser");
+            if (role == "Nutricionista")
+            {
+                navManager.NavigateTo("/nutricionista");
+            }
+            else if (role == "Usuario")
+            {
+                navManager.NavigateTo("/usuario");
+            }
+            else if (role == "Administrador")
+            {
+                navManager.NavigateTo("/ManageUser");
+            }
+            else
+            {
+                navManager.NavigateTo("/"); // Redirigir a la página de inicio por defecto
+            }
         }
         else
         {
-            navManager.NavigateTo("/"); // Redirigir a la página de inicio por defecto
+            navManager.NavigateTo("/"); // Redirigir a la página de inicio por defecto si no se encuentra un rol
         }
     }
 
     public class TokenValidationResponse
     {
-        public string Message { get; set; }
         public string Email { get; set; }
+        public string Role { get; set; }
     }
 }

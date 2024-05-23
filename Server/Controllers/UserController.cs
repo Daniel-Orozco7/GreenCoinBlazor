@@ -29,40 +29,49 @@ namespace GreenCoinHealth.Server.Controllers
         [HttpPost("send-token")]
         public IActionResult SendToken([FromBody] string email)
         {
-            var token = _userRepository.GenerateJWTToken(email);
-            if (token == null)
+            var user = _userRepository.GetUserByEmail(email);
+            if (user == null)
             {
                 return BadRequest(new { Mensaje = "El correo no se encuentra registrado" });
             }
-            else
+
+            var role = _userRepository.GetUserRoleByEmail(email);
+            if (role == null)
             {
-                _userRepository.SendtokenEmail(email, token);
-                return Ok(new { Mensaje = "Token enviado correctamente" });
+                return BadRequest(new { Mensaje = "El rol no se encuentra asignado" });
             }
+
+            var token = _userRepository.GenerateJWTToken(user.Email, role);
+            if (token == null)
+            {
+                return BadRequest(new { Mensaje = "Error al generar el token" });
+            }
+
+            _userRepository.SendtokenEmail(user.Email, token);
+            return Ok(new { Mensaje = "Token enviado correctamente" });
         }
         [HttpPost("validate-token")]
-        public async Task<IActionResult> ValidateToken([FromBody] string Token)
+        public async Task<IActionResult> ValidateToken([FromBody] string token)
         {
-            if(_userRepository.ValidateToken(Token, out string email))
+            if (_userRepository.ValidateToken(token, out string email, out string role))
             {
-                // Crear claims basado en la información del usuario
                 var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, email),
-                new Claim(ClaimTypes.Email, email), 
-                // Puedes añadir más claims según sea necesario
-            };
+        {
+            new Claim(ClaimTypes.Name, email),
+            new Claim(ClaimTypes.Email, email),
+            new Claim(ClaimTypes.Role, role)
+            // Puedes añadir más claims según sea necesario
+        };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-                // Autenticar al usuario
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
-                return Ok(new { Mensaje = "Token valido" });
+                return Ok(new { Email = email, Role = role });
             }
             else
             {
-                return Unauthorized("Token invalido");
+                return Unauthorized("Token inválido");
             }
         }
         //POST: api/User

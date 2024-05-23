@@ -1,0 +1,76 @@
+﻿@page "/Verify-Token"
+
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider autenticacionProvider
+@using GreenCoinHealth.Client.Extensions
+@using GreenCoinHealth.Shared
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+
+
+<h3>Verify Token</h3>
+<EditForm Model="tokenModel" OnValidSubmit="ValidateToken">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label>Token:</label>
+        <InputText @bind-Value="tokenModel.Token" id="Token" placeholder="Ingrese el token" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Verify</button>
+</EditForm>
+<p>@message</p>
+
+@code {
+    private string message;
+    private TokenModel tokenModel = new TokenModel();
+
+    private async Task ValidateToken()
+    {
+        var response = await Http.PostAsJsonAsync("api/user/verify-token", tokenModel);
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadFromJsonAsync<ApiResponse>();
+            message = $"Email: {result.Email}, Role: {result.Role}";
+            // Guardar el token en el almacenamiento local
+            // Navegar a la página principal o a la vista según el rol
+            // Obtener el rol del usuario
+            var user = (await autenticacionProvider.GetAuthenticationStateAsync()).User;
+            var roles = user.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+
+            // Redireccionar basado en el rol
+            if (roles.Contains("Nutricionista"))
+            {
+                Navigation.NavigateTo("/nutricionista");
+            }
+            else if (roles.Contains("Usuario"))
+            {
+                Navigation.NavigateTo("/usuario");
+            }
+            else if (roles.Contains("Administrador"))
+            {
+                Navigation.NavigateTo("/ManageUser");
+            }
+            else
+            {
+                Navigation.NavigateTo("/"); // Redirigir a la página de inicio por defecto
+            }
+        }
+        else
+        {
+            message = "Token inválido";
+        }
+    }
+
+    private class ApiResponse
+    {
+        public string Email { get; set; }
+        public string Role { get; set; }
+    }
+
+    private class TokenModel
+    {
+        public string Token { get; set; }
+    }
+}

@@ -200,19 +200,24 @@ public class UserRepository
         }
     }
 
-    public string GenerateJWTToken(string email)
+    public string GenerateJWTToken(string email, string role)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_configuration["Settings:Key"]);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[] { new Claim("email", email) }),
-            Expires = DateTime.UtcNow.AddMinutes(2), // Token válido por 2 minutos
+            Subject = new ClaimsIdentity(new[]
+            {
+            new Claim("email", email),
+            new Claim("role", role) // Agregar el reclamo del rol
+        }),
+            Expires = DateTime.UtcNow.AddMinutes(10), // Token válido por 10 minutos
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
     }
+
     public void SendtokenEmail(string email, string token)
     {
         try 
@@ -226,11 +231,12 @@ public class UserRepository
             Console.WriteLine($"Error al enviar el token por correo: {ex.Message}");
         }
     }
-    public bool ValidateToken(string token, out string email)
+    public bool ValidateToken(string token, out string email, out string role)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_configuration["Settings:Key"]);
         email = null;
+        role = null;
 
         try
         {
@@ -245,6 +251,7 @@ public class UserRepository
 
             var jwtToken = (JwtSecurityToken)validatedToken;
             email = jwtToken.Claims.First(x => x.Type == "email").Value;
+            role = jwtToken.Claims.First(x => x.Type == "role").Value; // Extraer el reclamo del rol
             return true;
         }
         catch
@@ -252,6 +259,7 @@ public class UserRepository
             return false;
         }
     }
+
 
     public static  bool Login(string email, string password)
     {
@@ -277,6 +285,31 @@ public class UserRepository
             }
         }
     }
+    public User GetUserByEmail(string email)
+    {
+        using (var context = new GreenCoinHealthContext())
+        {
+            return context.Users.FirstOrDefault(u => u.Email == email);
+        }
+    }
+
+    public string GetUserRoleByEmail(string email)
+    {
+        using (var context = new GreenCoinHealthContext())
+        {
+            var user = context.Users.FirstOrDefault(u => u.Email == email);
+            if (user != null)
+            {
+                var role = context.Roles.FirstOrDefault(r => r.IdRole == user.IdRole);
+                if (role != null)
+                {
+                    return role.Name;
+                }
+            }
+            return null;
+        }
+    }
+
     public static bool Mail(MailDTO model)
     {
         EncriptPwd encryptor = new EncriptPwd();

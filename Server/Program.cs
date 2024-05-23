@@ -1,13 +1,12 @@
 using GreenCoinHealth.Server.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.ResponseCompression;
-using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,30 +25,29 @@ var conectionString = builder.Configuration.GetConnectionString("GreenCoinHealth
 builder.Services.AddDbContext<GreenCoinHealthContext>(
     options => options.UseSqlServer(conectionString)
 );
+
+// Configurar autenticación JWT
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Settings:Issuer"],
+            ValidAudience = builder.Configuration["Settings:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(keyBytes)
+        };
+    });
+
+// Configurar autenticación con cookies para el inicio de sesión
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/api/Autentication/Login";
+        options.LoginPath = "/login"; // Ruta de inicio de sesión
     });
-// Configurar autenticación JWT
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Settings:Issuer"],
-        ValidAudience = builder.Configuration["Settings:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(keyBytes)
-    };
-});
 
 builder.Services.AddScoped<UserRepository>();
 
@@ -74,7 +72,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); // Añadir esta línea
+app.UseAuthentication(); // Añadir esta línea antes de UseAuthorization
 app.UseAuthorization();
 
 app.MapRazorPages();
